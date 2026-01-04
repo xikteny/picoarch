@@ -512,20 +512,39 @@ static void perform_emu_action(void) {
 		}
 		break;
 	case EACTION_PAN_DISPLAY_LEFT:
-		pan_display = PAN_DISPLAY_LEFT;
-		scale_update_scaler();
-		need_full_clear = 1;
-		break;
+		if (pan_display == PAN_DISPLAY_LEFT) {
+			pan_display = PAN_DISPLAY_RIGHT;
+			scale_update_scaler();
+			need_full_clear = 1;
+			break;
+		} else if (pan_display == PAN_DISPLAY_RIGHT) {
+			pan_display = PAN_DISPLAY_OFF;
+			scale_update_scaler();
+			need_full_clear = 1;
+			break;
+		} else {
+			pan_display = PAN_DISPLAY_LEFT;
+			scale_update_scaler();
+			need_full_clear = 1;
+			break;
+		}
 	case EACTION_PAN_DISPLAY_RIGHT:
-		pan_display = PAN_DISPLAY_RIGHT;
-		scale_update_scaler();
-		need_full_clear = 1;
-		break;
-	case EACTION_PAN_DISPLAY_OFF:
-		pan_display = PAN_DISPLAY_OFF;
-		scale_update_scaler();
-		need_full_clear = 1;
-		break;
+		if (pan_display == PAN_DISPLAY_RIGHT) {
+			pan_display = PAN_DISPLAY_LEFT;
+			scale_update_scaler();
+			need_full_clear = 1;
+			break;
+		} else if (pan_display == PAN_DISPLAY_LEFT) {
+			pan_display = PAN_DISPLAY_OFF;
+			scale_update_scaler();
+			need_full_clear = 1;
+			break;
+		} else {
+			pan_display = PAN_DISPLAY_RIGHT;
+			scale_update_scaler();
+			need_full_clear = 1;
+			break;
+		}
 #endif
 	case EACTION_QUIT:
 		should_quit = 1;

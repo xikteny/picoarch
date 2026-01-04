@@ -65,7 +65,6 @@ me_bind_action mame2000_emu_actions[] =
 	{ "Screenshot   ", 1 << EACTION_SCREENSHOT },
 	{ "Panning Left ", 1 << EACTION_PAN_DISPLAY_LEFT },
 	{ "Panning Right", 1 << EACTION_PAN_DISPLAY_RIGHT },
-	{ "Panning OFF  ", 1 << EACTION_PAN_DISPLAY_OFF },
 	{ NULL,            0 }
 };
 
