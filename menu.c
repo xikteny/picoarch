@@ -79,8 +79,10 @@ me_bind_action emuctrl_actions[] =
 	{ "FPS/CPU%     ", 1 << EACTION_TOGGLE_HUD },
 	{ "Fast Forward ", 1 << EACTION_TOGGLE_FF },
 	{ "Screenshot   ", 1 << EACTION_SCREENSHOT },
+#ifdef FUNKEY_S
 	{ "Panning Left ", 1 << EACTION_PAN_DISPLAY_LEFT },
 	{ "Panning Right", 1 << EACTION_PAN_DISPLAY_RIGHT },
+#endif
 	{ NULL,            0 }
 };
 
@@ -788,8 +790,10 @@ static menu_entry e_menu_video_options[] =
 	mee_onoff_h      ("Show FPS",                 0, show_fps, 1, h_show_fps),
 	mee_onoff_h      ("Show CPU usage",           0, show_cpu, 1, h_show_cpu),
 	mee_enum_h       ("Display mode",             0, scale_size, men_scale_size, h_scale_size),
+#ifdef FUNKEY_S
 	mee_cust_h       ("Zoom level",                  MB_OPT_CUSTOM, mh_zoom_level, mgn_zoom_level, h_zoom_level),
 	mee_enum_h       ("Screen panning",           0, pan_display, men_pan_display, h_pan_display),
+#endif
 	mee_enum_h       ("Screen rotation",          0, rotate_display, men_rotate_display, h_rotate_display),
 	mee_enum_h       ("Scaling filter",           0, scale_filter, men_scale_filter, h_scale_filter),
 	mee_range_h      ("Audio buffer",             0, audio_buffer_size, 1, 15, h_audio_buffer_size),
