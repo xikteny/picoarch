@@ -16,6 +16,14 @@
 #include "plat.h"
 #include "util.h"
 #include "video.h"
+#include <sys/time.h>
+
+// Performance function to measure time in microseconds
+static retro_perf_tick_t retro_perf_get_time_usec(void) {
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return (retro_perf_tick_t)((uint64_t)tv.tv_sec * 1000000 + tv.tv_usec);
+}
 
 struct core_cbs current_core;
 char core_path[MAX_PATH];
@@ -581,6 +589,15 @@ static bool pa_environment(unsigned cmd, void *data) {
 				audio_buffer_size_override = frames;
 			else
 				PA_WARN("Audio buffer change out of range (%d), ignored\n", frames);
+		}
+		break;
+	}
+	case RETRO_ENVIRONMENT_GET_PERF_INTERFACE: {
+		struct retro_perf_callback *cb = (struct retro_perf_callback *)data;
+		if (cb) {
+			cb->get_time_usec = (retro_perf_get_time_usec_t)retro_perf_get_time_usec;
+			PA_INFO("PERF INTERFACE : Callback get_time_usec saved\n");
+			return true;
 		}
 		break;
 	}
