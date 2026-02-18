@@ -448,14 +448,17 @@ static const char credits[] =
 	"   PicoArch rev. " REVISION "\n\n\n\n"
 	"      --- Credits ---\n\n\n"
 	" neonloop: original author\n\n"
-	" Hairo:    .sav/.srm option\n\n"
-	" DrUm78:   screen rotation,\n"
+	" Hairo   : .sav/.srm option\n\n"
 #ifdef FUNKEY_S
+	" DrUm78  : screen rotation,\n"
 	"           cropped mode,\n"
 	"           manual mode,\n"
 	"           screen panning,\n"
+	"           bug fixes\n\n"
+	" xikteny : panning ideas";
+#else
+	" DrUm78  : bug fixes";
 #endif
-	"           bug fixes";
 
 static int menu_loop_disc(int id, int keys)
 {
@@ -682,7 +685,7 @@ static const char h_restore_def[]     = "Switches back to default settings.";
 static const char h_show_fps[]        = "Shows frames and vsyncs per second.";
 static const char h_show_cpu[]        = "Shows CPU usage (%).";
 
-#ifndef FUNKEY_S
+#if (SCREEN_WIDTH >= 320)
 static const char h_enable_drc[]      = "Dynamically adjusts audio rate for smoother video.";
 
 static const char h_audio_buffer_size[]        =
@@ -705,20 +708,13 @@ static const char h_use_srm[]        =
 	"compatibility with mainline RetroArch saves.\n"
 	"Save file compression needs to be off in RetroArch.";
 
-static const char h_rotate_display[] =
-	"Screen orientation. Rotates by 90, 180 or 270\n"
-	"degrees clockwise.";
-
-static const char *men_rotate_display[] =
+static const char *men_scale_size[] =
 {
-	"OFF",
-	"90 clockwise",
-	"180 clockwise",
-	"270 clockwise",
+	"NATIVE",
+	"SCALED",
+	"STRETCHED",
 	NULL
 };
-
-static const char *men_scale_size[] = { "NATIVE", "SCALED", "STRETCHED", NULL };
 #else
 static const char h_enable_drc[]      =
 	"Dynamically adjusts audio rate for\n"
@@ -732,14 +728,15 @@ static const char h_audio_buffer_size[]        =
 static const char h_scale_size[]        =
 	"NATIVE does no stretching. SCALED keeps\n"
 	"the correct aspect ratio. STRETCHED\n"
-	"uses the whole screen. CROPPED hides\n"
-	"pixels on the sides. MANUAL allows\n"
-	"resizing beyond the screen limit.";
+	"uses the whole screen. CROPPED allows\n"
+	"resizing beyond the screen limit.\n"
+	"MANUAL allows manual screen resizing.";
 
 static const char h_zoom_level[]        =
 	"Control the zoom level of the MANUAL\n"
-	"mode. Hotkey Fn+left/right can be also\n"
-	"used to change the zoom level (+/-10%).";
+	"mode. Hotkeys Fn+left/right can be used\n"
+	"to change the zoom level (+/-10%) and\n"
+	"switch automatically to MANUAL mode.";
 
 static const char h_scale_filter[]        =
 	"When stretching, how missing pixels\n"
@@ -763,6 +760,16 @@ static const char h_pan_display[] =
 	"screen when the game width exceeds 240\n"
 	"pixels.";
 
+static const char *men_scale_size[] =
+{
+	"NATIVE",
+	"SCALED",
+	"STRETCHED",
+	"CROPPED",
+	"MANUAL",
+	NULL
+};
+
 static const char *men_rotate_display[] =
 {
 	"OFF",
@@ -779,11 +786,15 @@ static const char *men_pan_display[] =
 	"RIGHT",
 	NULL
 };
-
-static const char *men_scale_size[] = { "NATIVE", "SCALED", "STRETCHED", "CROPPED", "MANUAL", NULL };
 #endif
 
-static const char *men_scale_filter[] = { "NEAREST", "SHARP", "SMOOTH", NULL};
+static const char *men_scale_filter[] =
+{
+	"NEAREST",
+	"SHARP",
+	"SMOOTH",
+	NULL
+};
 
 static menu_entry e_menu_video_options[] =
 {
@@ -793,8 +804,8 @@ static menu_entry e_menu_video_options[] =
 #ifdef FUNKEY_S
 	mee_cust_h       ("Zoom level",                  MB_OPT_CUSTOM, mh_zoom_level, mgn_zoom_level, h_zoom_level),
 	mee_enum_h       ("Screen panning",           0, pan_display, men_pan_display, h_pan_display),
-#endif
 	mee_enum_h       ("Screen rotation",          0, rotate_display, men_rotate_display, h_rotate_display),
+#endif
 	mee_enum_h       ("Scaling filter",           0, scale_filter, men_scale_filter, h_scale_filter),
 	mee_range_h      ("Audio buffer",             0, audio_buffer_size, 1, 15, h_audio_buffer_size),
 	mee_onoff_h      ("Audio adjustment",         0, enable_drc, 1, h_enable_drc),
