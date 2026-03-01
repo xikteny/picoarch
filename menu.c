@@ -64,8 +64,10 @@ me_bind_action me_ctrl_actions[] =
 	{ "R BUTTON ",  1 << RETRO_DEVICE_ID_JOYPAD_R },
 	{ "L2 BUTTON ", 1 << RETRO_DEVICE_ID_JOYPAD_L2 },
 	{ "R2 BUTTON ", 1 << RETRO_DEVICE_ID_JOYPAD_R2 },
+#ifndef FUNKEY_S
 	{ "L3 BUTTON ", 1 << RETRO_DEVICE_ID_JOYPAD_L3 },
 	{ "R3 BUTTON ", 1 << RETRO_DEVICE_ID_JOYPAD_R3 },
+#endif
 	{ NULL,       0 }
 };
 
@@ -76,12 +78,12 @@ me_bind_action emuctrl_actions[] =
 {
 	{ "Save State   ", 1 << EACTION_SAVE_STATE },
 	{ "Load State   ", 1 << EACTION_LOAD_STATE },
-	{ "FPS/CPU%     ", 1 << EACTION_TOGGLE_HUD },
+	{ "Toggle HUD   ", 1 << EACTION_TOGGLE_HUD },
 	{ "Fast Forward ", 1 << EACTION_TOGGLE_FF },
 	{ "Screenshot   ", 1 << EACTION_SCREENSHOT },
 #ifdef FUNKEY_S
-	{ "Panning Left ", 1 << EACTION_PAN_DISPLAY_LEFT },
-	{ "Panning Right", 1 << EACTION_PAN_DISPLAY_RIGHT },
+	{ "Pan Left     ", 1 << EACTION_PAN_DISPLAY_LEFT },
+	{ "Pan Right    ", 1 << EACTION_PAN_DISPLAY_RIGHT },
 #endif
 	{ NULL,            0 }
 };

@@ -54,12 +54,12 @@ me_bind_action scummvm_ctrl_actions[] =
 
 me_bind_action scummvm_emu_actions[] =
 {
-	{ "FPS/CPU%     ", 1 << EACTION_TOGGLE_HUD },
+	{ "Toggle HUD   ", 1 << EACTION_TOGGLE_HUD },
 	{ "Fast Forward ", 1 << EACTION_TOGGLE_FF },
 	{ "Screenshot   ", 1 << EACTION_SCREENSHOT },
 #ifdef FUNKEY_S
-	{ "Panning Left ", 1 << EACTION_PAN_DISPLAY_LEFT },
-	{ "Panning Right", 1 << EACTION_PAN_DISPLAY_RIGHT },
+	{ "Pan Left     ", 1 << EACTION_PAN_DISPLAY_LEFT },
+	{ "Pan Right    ", 1 << EACTION_PAN_DISPLAY_RIGHT },
 #endif
 	{ NULL,            0 }
 };
