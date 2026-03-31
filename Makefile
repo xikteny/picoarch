@@ -7,7 +7,7 @@ SYSROOT   = $(shell $(CC) --print-sysroot)
 
 PROCS     = -j4
 
-SOURCES   = libpicofe/input.c libpicofe/in_sdl.c libpicofe/linux/in_evdev.c libpicofe/linux/plat.c libpicofe/fonts.c libpicofe/readpng.c libpicofe/config_file.c cheat.c config.c content.c core.c menu.c main.c options.c overrides.c patch.c scale.c unzip.c util.c video.c
+SOURCES   = libpicofe/input.c libpicofe/in_sdl.c libpicofe/linux/in_evdev.c libpicofe/linux/plat.c libpicofe/fonts.c libpicofe/readpng.c libpicofe/config_file.c cheat.c config.c content.c core.c menu.c main.c options.c overrides.c patch.c rewind.c scale.c unzip.c util.c video.c
 
 BIN       = picoarch
 
@@ -20,7 +20,7 @@ CFLAGS     += -I./ -I./libretro-common/include/ $(shell $(SYSROOT)/usr/bin/sdl-c
 GIT_REVISION ?= $(shell git rev-parse --short HEAD || echo unknown)
 CFLAGS += -DREVISION=\"$(GIT_REVISION)\"
 
-LDFLAGS    = -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -Wl,--gc-sections -flto
+LDFLAGS    = -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -llz4 -lpthread -Wl,--gc-sections -flto
 
 # Unpolished or slow cores that build
 # EXTRA_CORES += mame2003_plus scummvm
