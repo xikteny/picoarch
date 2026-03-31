@@ -879,11 +879,11 @@ static const char h_rewind_enabled[] =
 	"Uses extra CPU and memory.";
 
 static const char h_rewind_buffer_mb[] =
-	"Memory reserved for rewind snapshots\n"
-	"(MB). Increase for longer rewind times.";
+	"Memory reserved for rewind snapshots.\n"
+	"Increase for longer rewind times.";
 
 static const char h_rewind_interval_ms[] =
-	"Interval between rewind snapshots (ms).\n"
+	"Interval between rewind snapshots.\n"
 	"Shorter values improve smoothness but\n"
 	"increase CPU and memory usage.";
 
@@ -895,18 +895,33 @@ static const char h_rewind_compress[] =
 	"memory at the cost of CPU.";
 
 static const char h_rewind_lz4_accel[] =
-	"LZ4 compression speed (1-64).\n"
+	"LZ4 compression speed.\n"
 	"Higher values compress faster but\n"
 	"use more memory per snapshot.";
 
+static const char *men_rewind_buffer[] = {
+	"2 MB", "4 MB", "8 MB", "16 MB", "32 MB", NULL
+};
+
+static const char *men_rewind_interval[] = {
+	"16 ms (~60 fps)", "22 ms (~45 fps)", "25 ms (~40 fps)",
+	"33 ms (~30 fps)", "50 ms (~20 fps)", "66 ms (~15 fps)",
+	"100 ms (~10 fps)", "150 ms (~7 fps)", "200 ms (~5 fps)",
+	"300 ms", "450 ms", "600 ms", NULL
+};
+
+static const char *men_rewind_lz4_accel[] = {
+	"1 (best ratio)", "2 (default)", "4 (fast)", "8 (faster)", "12 (fastest)", NULL
+};
+
 static menu_entry e_menu_rewind_options[] =
 {
-	mee_onoff_h  ("Rewind",              0, rewind_enabled,         1,   h_rewind_enabled),
-	mee_range_h  ("Buffer size (MB)",    0, rewind_buffer_mb,       1, 256, h_rewind_buffer_mb),
-	mee_range_h  ("Interval (ms)",       0, rewind_interval_ms,     1, 1000, h_rewind_interval_ms),
-	mee_onoff_h  ("Audio on rewind",     0, rewind_audio,           1,   h_rewind_audio),
-	mee_onoff_h  ("Compression",         0, rewind_compress,        1,   h_rewind_compress),
-	mee_range_h  ("LZ4 acceleration",    0, rewind_lz4_acceleration, 1, 64, h_rewind_lz4_accel),
+	mee_onoff_h  ("Rewind",              0, rewind_enabled,             1,   h_rewind_enabled),
+	mee_enum_h   ("Buffer size",         0, rewind_buffer_mb_idx,       men_rewind_buffer,    h_rewind_buffer_mb),
+	mee_enum_h   ("Interval",            0, rewind_interval_ms_idx,     men_rewind_interval,  h_rewind_interval_ms),
+	mee_onoff_h  ("Audio on rewind",     0, rewind_audio,               1,   h_rewind_audio),
+	mee_onoff_h  ("Compression",         0, rewind_compress,            1,   h_rewind_compress),
+	mee_enum_h   ("LZ4 acceleration",    0, rewind_lz4_acceleration_idx, men_rewind_lz4_accel, h_rewind_lz4_accel),
 	mee_end,
 };
 

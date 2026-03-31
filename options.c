@@ -22,11 +22,19 @@ enum scale_size scale_size;
 enum scale_filter scale_filter;
 
 int rewind_enabled      = 0;
-int rewind_buffer_mb    = 64;
-int rewind_interval_ms  = 16;
+int rewind_buffer_mb_idx    = 2;   /* index into rewind_buffer_mb_values[] → 8 MB */
+int rewind_interval_ms_idx  = 0;   /* index into rewind_interval_ms_values[] → 16 ms */
 int rewind_audio        = 0;
 int rewind_compress     = 1;
-int rewind_lz4_acceleration = 2;
+int rewind_lz4_acceleration_idx = 1; /* index into rewind_lz4_acceleration_values[] → 2 */
+
+const int rewind_buffer_mb_values[]        = { 2, 4, 8, 16, 32 };
+const int rewind_interval_ms_values[]      = { 16, 22, 25, 33, 50, 66, 100, 150, 200, 300, 450, 600 };
+const int rewind_lz4_acceleration_values[] = { 1, 2, 4, 8, 12 };
+
+_Static_assert(array_size(rewind_buffer_mb_values)        == REWIND_BUFFER_MB_COUNT,        "REWIND_BUFFER_MB_COUNT mismatch");
+_Static_assert(array_size(rewind_interval_ms_values)      == REWIND_INTERVAL_MS_COUNT,      "REWIND_INTERVAL_MS_COUNT mismatch");
+_Static_assert(array_size(rewind_lz4_acceleration_values) == REWIND_LZ4_ACCELERATION_COUNT, "REWIND_LZ4_ACCELERATION_COUNT mismatch");
 
 struct core_options core_options;
 

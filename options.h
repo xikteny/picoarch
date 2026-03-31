@@ -24,11 +24,19 @@ extern enum scale_size scale_size;
 extern enum scale_filter scale_filter;
 
 extern int rewind_enabled;
-extern int rewind_buffer_mb;
-extern int rewind_interval_ms;
+extern int rewind_buffer_mb_idx;
+extern int rewind_interval_ms_idx;
 extern int rewind_audio;
 extern int rewind_compress;
-extern int rewind_lz4_acceleration;
+extern int rewind_lz4_acceleration_idx;
+
+extern const int rewind_buffer_mb_values[];
+extern const int rewind_interval_ms_values[];
+extern const int rewind_lz4_acceleration_values[];
+
+#define REWIND_BUFFER_MB_COUNT        5
+#define REWIND_INTERVAL_MS_COUNT      12
+#define REWIND_LZ4_ACCELERATION_COUNT 5
 
 struct core_option_entry {
 	char *key;

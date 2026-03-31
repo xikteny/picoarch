@@ -34,11 +34,11 @@ static const struct {
 	CE_NUM(zoom_level),
 	CE_NUM(pan_display),
 	CE_NUM(rewind_enabled),
-	CE_NUM(rewind_buffer_mb),
-	CE_NUM(rewind_interval_ms),
+	CE_NUM(rewind_buffer_mb_idx),
+	CE_NUM(rewind_interval_ms_idx),
 	CE_NUM(rewind_audio),
 	CE_NUM(rewind_compress),
-	CE_NUM(rewind_lz4_acceleration),
+	CE_NUM(rewind_lz4_acceleration_idx),
 };
 
 void config_write(FILE *f)

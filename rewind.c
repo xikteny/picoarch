@@ -30,7 +30,7 @@
 #define REWIND_POOL_SIZE_SMALL       3
 #define REWIND_POOL_SIZE_LARGE       4
 #define REWIND_LARGE_STATE_THRESHOLD (2 * 1024 * 1024)
-#define REWIND_MAX_BUFFER_MB         256
+#define REWIND_MAX_BUFFER_MB         32
 #define REWIND_MAX_LZ4_ACCELERATION  64
 
 /* ── entry / context structs ───────────────────────────────── */
@@ -73,7 +73,6 @@ typedef struct {
 	int           frame_counter;
 	unsigned int  generation;
 	int           enabled;
-	int           audio;
 	int           compress;
 	int           lz4_acceleration;
 	int           logged_first;
@@ -413,7 +412,10 @@ void rewind_init(size_t state_size)
 		return;
 	}
 
-	int buf_mb = rewind_buffer_mb;
+	int buf_idx = rewind_buffer_mb_idx;
+	if (buf_idx < 0) buf_idx = 0;
+	if (buf_idx >= REWIND_BUFFER_MB_COUNT) buf_idx = REWIND_BUFFER_MB_COUNT - 1;
+	int buf_mb = rewind_buffer_mb_values[buf_idx];
 	if (buf_mb < 1)               buf_mb = 1;
 	if (buf_mb > REWIND_MAX_BUFFER_MB) buf_mb = REWIND_MAX_BUFFER_MB;
 
@@ -427,20 +429,27 @@ void rewind_init(size_t state_size)
 		rewind_ctx.compress = 1;
 	}
 
-	int accel = rewind_lz4_acceleration;
+	int accel_idx = rewind_lz4_acceleration_idx;
+	if (accel_idx < 0) accel_idx = 0;
+	if (accel_idx >= REWIND_LZ4_ACCELERATION_COUNT) accel_idx = REWIND_LZ4_ACCELERATION_COUNT - 1;
+	int accel = rewind_lz4_acceleration_values[accel_idx];
 	if (accel < 1)                         accel = 1;
 	if (accel > REWIND_MAX_LZ4_ACCELERATION) accel = REWIND_MAX_LZ4_ACCELERATION;
 	rewind_ctx.lz4_acceleration = accel;
 	rewind_ctx.logged_first     = 0;
 
+	int ms_idx = rewind_interval_ms_idx;
+	if (ms_idx < 0) ms_idx = 0;
+	if (ms_idx >= REWIND_INTERVAL_MS_COUNT) ms_idx = REWIND_INTERVAL_MS_COUNT - 1;
+	int interval_ms = rewind_interval_ms_values[ms_idx];
 	if (rewind_ctx.compress)
 		PA_INFO("Rewind: config enable=1 bufferMB=%i interval=%ims audio=%i "
 		        "compression=lz4 (accel=%i)\n",
-		        buf_mb, rewind_interval_ms, rewind_audio, rewind_ctx.lz4_acceleration);
+		        buf_mb, interval_ms, rewind_audio, rewind_ctx.lz4_acceleration);
 	else
 		PA_INFO("Rewind: config enable=1 bufferMB=%i interval=%ims audio=%i "
 		        "compression=raw\n",
-		        buf_mb, rewind_interval_ms, rewind_audio);
+		        buf_mb, interval_ms, rewind_audio);
 
 	rewind_ctx.buffer = calloc(1, rewind_ctx.capacity);
 	if (!rewind_ctx.buffer) {
@@ -487,8 +496,9 @@ void rewind_init(size_t state_size)
 		return;
 	}
 
-	rewind_ctx.use_time_cadence = 1;
-	rewind_ctx.interval_ms      = rewind_interval_ms < 1 ? 1 : rewind_interval_ms;
+	rewind_ctx.use_time_cadence  = 1;
+	rewind_ctx.granularity_frames = 1;
+	rewind_ctx.interval_ms       = interval_ms < 1 ? 1 : interval_ms;
 
 	double fps       = frame_rate > 1.0 ? frame_rate : 60.0;
 	int    frame_ms  = (int)(1000.0 / fps);
@@ -502,7 +512,6 @@ void rewind_init(size_t state_size)
 	        capture_ms, rewind_ctx.playback_interval_ms,
 	        state_size, rewind_ctx.capacity, entry_cap);
 
-	rewind_ctx.audio      = rewind_audio;
 	rewind_ctx.enabled    = 1;
 	rewind_ctx.generation = 1;
 	rewind_ctx.worker_stop = 0;
