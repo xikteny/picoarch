@@ -673,6 +673,21 @@ void rewind_push(int force)
 	pthread_mutex_unlock(&rewind_ctx.lock);
 }
 
+void rewind_prepare_decode(void)
+{
+	if (!rewind_ctx.compress || !rewind_ctx.prev_state_dec) return;
+	Rewind_wait_for_worker_idle();
+	pthread_mutex_lock(&rewind_ctx.lock);
+	if (rewind_ctx.has_prev_enc && rewind_ctx.prev_state_enc) {
+		memcpy(rewind_ctx.prev_state_dec, rewind_ctx.prev_state_enc,
+		       rewind_ctx.state_size);
+		rewind_ctx.has_prev_dec = 1;
+	} else {
+		rewind_ctx.has_prev_dec = 0;
+	}
+	pthread_mutex_unlock(&rewind_ctx.lock);
+}
+
 int rewind_step_back(void)
 {
 	if (!rewind_ctx.enabled) return REWIND_STEP_EMPTY;
@@ -682,20 +697,6 @@ int rewind_step_back(void)
 	if (rewind_ctx.playback_interval_ms > 0 && rewind_ctx.last_step_ms &&
 	    (int)(now_ms - rewind_ctx.last_step_ms) < rewind_ctx.playback_interval_ms)
 		return REWIND_STEP_CADENCE;
-
-	/* On first rewind step, sync decode reference to encode reference */
-	if (!rewinding && rewind_ctx.compress && rewind_ctx.prev_state_dec) {
-		Rewind_wait_for_worker_idle();
-		pthread_mutex_lock(&rewind_ctx.lock);
-		if (rewind_ctx.has_prev_enc && rewind_ctx.prev_state_enc) {
-			memcpy(rewind_ctx.prev_state_dec, rewind_ctx.prev_state_enc,
-			       rewind_ctx.state_size);
-			rewind_ctx.has_prev_dec = 1;
-		} else {
-			rewind_ctx.has_prev_dec = 0;
-		}
-		pthread_mutex_unlock(&rewind_ctx.lock);
-	}
 
 	pthread_mutex_lock(&rewind_ctx.lock);
 
@@ -742,12 +743,7 @@ int rewind_step_back(void)
 		} else {
 			PA_WARN("Rewind: delta frame without previous state, "
 			        "results may be incorrect\n");
-			memcpy(rewind_ctx.state_buf, rewind_ctx.delta_buf, rewind_ctx.state_size);
-			if (rewind_ctx.prev_state_dec) {
-				memcpy(rewind_ctx.prev_state_dec, rewind_ctx.state_buf,
-				       rewind_ctx.state_size);
-				rewind_ctx.has_prev_dec = 1;
-			}
+			decode_ok = 0;
 		}
 	} else {
 		if (e->size != rewind_ctx.state_size) {
@@ -786,7 +782,6 @@ int rewind_step_back(void)
 
 	pthread_mutex_unlock(&rewind_ctx.lock);
 
-	rewinding               = 1;
 	rewind_ctx.last_step_ms = now_ms;
 	return REWIND_STEP_OK;
 }

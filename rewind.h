@@ -15,6 +15,7 @@ void rewind_init(size_t state_size);
 void rewind_free(void);
 void rewind_reset(void);
 void rewind_push(int force);
+void rewind_prepare_decode(void);
 int  rewind_step_back(void);
 void rewind_sync_encode_state(void);
 void rewind_on_state_change(void);
