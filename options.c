@@ -21,6 +21,13 @@ unsigned audio_buffer_size;
 enum scale_size scale_size;
 enum scale_filter scale_filter;
 
+int rewind_enabled      = 0;
+int rewind_buffer_mb    = 64;
+int rewind_interval_ms  = 16;
+int rewind_audio        = 0;
+int rewind_compress     = 1;
+int rewind_lz4_acceleration = 2;
+
 struct core_options core_options;
 
 #ifdef FUNKEY_S

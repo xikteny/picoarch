@@ -23,6 +23,13 @@ extern unsigned audio_buffer_size;
 extern enum scale_size scale_size;
 extern enum scale_filter scale_filter;
 
+extern int rewind_enabled;
+extern int rewind_buffer_mb;
+extern int rewind_interval_ms;
+extern int rewind_audio;
+extern int rewind_compress;
+extern int rewind_lz4_acceleration;
+
 struct core_option_entry {
 	char *key;
 	char *desc;

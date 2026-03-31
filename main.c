@@ -12,6 +12,7 @@
 #include "menu.h"
 #include "overrides.h"
 #include "plat.h"
+#include "rewind.h"
 #include "util.h"
 
 #ifdef MMENU
@@ -446,9 +447,23 @@ static void perform_emu_action(void) {
 		break;
 	case EACTION_LOAD_STATE:
 		state_read();
+		rewind_on_state_change();
 		break;
 	case EACTION_TOGGLE_FF:
 		toggle_fast_forward(0);
+		break;
+	case EACTION_REWIND:
+		if (rewinding) {
+			rewinding = 0;
+			rewind_sync_encode_state();
+			if (!rewind_audio)
+				enable_audio = 1;
+		} else {
+			toggle_fast_forward(1); /* force FF off */
+			rewinding = 1;
+			if (!rewind_audio)
+				enable_audio = 0;
+		}
 		break;
 	case EACTION_SCREENSHOT:
 		screenshot();
@@ -659,6 +674,8 @@ int state_resume(void) {
 		state_slot = resume_slot;
 		ret = state_read();
 		resume_slot = -1;
+		if (ret == 0)
+			rewind_on_state_change();
 	}
 	return ret;
 }
@@ -731,6 +748,9 @@ int main(int argc, char **argv) {
 		quit(-1);
 	}
 
+	rewind_init(current_core.retro_serialize_size
+	            ? current_core.retro_serialize_size() : 0);
+
 	core_save_last_opened(content);
 
 	load_config_keys();
@@ -764,7 +784,18 @@ int main(int argc, char **argv) {
 	do {
 		count_fps();
 		adjust_audio();
-		core_run_frame();
+		if (rewinding) {
+			int step = rewind_step_back();
+			if (step == REWIND_STEP_EMPTY) {
+				rewinding = 0;
+				rewind_sync_encode_state();
+				if (!rewind_audio)
+					enable_audio = 1;
+			}
+		} else {
+			core_run_frame();
+			rewind_push(0);
+		}
 		perform_emu_action();
 #ifdef FUNKEY_S
 		if (should_suspend) {
@@ -789,6 +820,7 @@ void finish(void) {
 #endif
 
 	menu_finish();
+	rewind_free();
 	core_close();
 	plat_finish();
 }
