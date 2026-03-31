@@ -5,6 +5,7 @@
 #include "options.h"
 #include "overrides.h"
 #include "plat.h"
+#include "rewind.h"
 #include "scale.h"
 #include "util.h"
 
@@ -81,6 +82,7 @@ me_bind_action emuctrl_actions[] =
 	{ "Toggle HUD   ", 1 << EACTION_TOGGLE_HUD },
 	{ "Fast Forward ", 1 << EACTION_TOGGLE_FF },
 	{ "Screenshot   ", 1 << EACTION_SCREENSHOT },
+	{ "Rewind       ", 1 << EACTION_REWIND },
 #ifdef FUNKEY_S
 	{ "Pan Left     ", 1 << EACTION_PAN_DISPLAY_LEFT },
 	{ "Pan Right    ", 1 << EACTION_PAN_DISPLAY_RIGHT },
@@ -872,9 +874,54 @@ static int menu_loop_config_options(int id, int keys)
 	return 0;
 }
 
+static const char h_rewind_enabled[] =
+	"Enable the in-memory rewind buffer.\n"
+	"Uses extra CPU and memory.";
+
+static const char h_rewind_buffer_mb[] =
+	"Memory reserved for rewind snapshots\n"
+	"(MB). Increase for longer rewind times.";
+
+static const char h_rewind_interval_ms[] =
+	"Interval between rewind snapshots (ms).\n"
+	"Shorter values improve smoothness but\n"
+	"increase CPU and memory usage.";
+
+static const char h_rewind_audio[] =
+	"Keep audio playing during rewind.";
+
+static const char h_rewind_compress[] =
+	"Compress rewind snapshots to save\n"
+	"memory at the cost of CPU.";
+
+static const char h_rewind_lz4_accel[] =
+	"LZ4 compression speed (1-64).\n"
+	"Higher values compress faster but\n"
+	"use more memory per snapshot.";
+
+static menu_entry e_menu_rewind_options[] =
+{
+	mee_onoff_h  ("Rewind",              0, rewind_enabled,         1,   h_rewind_enabled),
+	mee_range_h  ("Buffer size (MB)",    0, rewind_buffer_mb,       1, 256, h_rewind_buffer_mb),
+	mee_range_h  ("Interval (ms)",       0, rewind_interval_ms,     1, 1000, h_rewind_interval_ms),
+	mee_onoff_h  ("Audio on rewind",     0, rewind_audio,           1,   h_rewind_audio),
+	mee_onoff_h  ("Compression",         0, rewind_compress,        1,   h_rewind_compress),
+	mee_range_h  ("LZ4 acceleration",    0, rewind_lz4_acceleration, 1, 64, h_rewind_lz4_accel),
+	mee_end,
+};
+
+static int menu_loop_rewind_options(int id, int keys)
+{
+	static int sel = 0;
+	me_loop(e_menu_rewind_options, &sel);
+	rewind_init(current_core.retro_serialize_size ? current_core.retro_serialize_size() : 0);
+	return 0;
+}
+
 static menu_entry e_menu_options[] =
 {
 	mee_handler   ("Audio and video",    menu_loop_video_options),
+	mee_handler   ("Rewind",             menu_loop_rewind_options),
 	mee_handler_id("Emulator options",   MA_OPT_CORE_OPTS,    menu_loop_core_options),
 	mee_handler_id("Player controls",    MA_CTRL_PLAYER1,     key_config_loop_wrap),
 	mee_handler_id("Emulator hotkeys",   MA_CTRL_EMU,         key_config_loop_wrap),
