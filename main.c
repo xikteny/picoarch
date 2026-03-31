@@ -788,9 +788,28 @@ int main(int argc, char **argv) {
 		count_fps();
 		adjust_audio();
 		if (rewinding) {
+			/* Poll input explicitly so user can toggle rewind off.
+			 * Normally input is only polled inside core_run_frame(),
+			 * but during REWIND_STEP_CADENCE we don't call that. */
+			{
+				int actions[IN_BINDTYPE_COUNT] = { 0, };
+				unsigned int emu_act;
+				int which = EACTION_NONE;
+				in_update(actions);
+				emu_act = actions[IN_BINDTYPE_EMU];
+				if (emu_act) {
+					for (; !(emu_act & 1); emu_act >>= 1, which++)
+						;
+					emu_act = which;
+				}
+				handle_emu_action(which);
+			}
+
 			int step = rewind_step_back();
 			if (step == REWIND_STEP_OK) {
+				emu_action saved_action = eaction;
 				core_run_frame();
+				eaction = saved_action;
 			} else if (step == REWIND_STEP_EMPTY) {
 				rewind_sync_encode_state();
 				rewinding = 0;
