@@ -460,6 +460,7 @@ static void perform_emu_action(void) {
 				enable_audio = 1;
 		} else {
 			toggle_fast_forward(1); /* force FF off */
+			rewind_prepare_decode();
 			rewinding = 1;
 			if (!rewind_audio)
 				enable_audio = 0;
