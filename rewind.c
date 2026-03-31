@@ -1,4 +1,4 @@
-/* rewind.c – in-memory rewind buffer with LZ4 + delta compression.
+/* rewind.c - in-memory rewind buffer with LZ4 + delta compression.
  *
  * Adapted from NextUI's minarch.c (LoveRetro/NextUI, commit 7d201cf).
  * Original implementation Copyright (C) NextUI contributors.
