@@ -454,14 +454,16 @@ static void perform_emu_action(void) {
 		break;
 	case EACTION_REWIND:
 		if (rewinding) {
-			rewinding = 0;
 			rewind_sync_encode_state();
+			rewinding = 0;
+			limit_frames = 1;
 			if (!rewind_audio)
 				enable_audio = 1;
 		} else {
 			toggle_fast_forward(1); /* force FF off */
 			rewind_prepare_decode();
 			rewinding = 1;
+			limit_frames = 0;
 			if (!rewind_audio)
 				enable_audio = 0;
 		}
@@ -787,12 +789,16 @@ int main(int argc, char **argv) {
 		adjust_audio();
 		if (rewinding) {
 			int step = rewind_step_back();
-			if (step == REWIND_STEP_EMPTY) {
-				rewinding = 0;
+			if (step == REWIND_STEP_OK) {
+				core_run_frame();
+			} else if (step == REWIND_STEP_EMPTY) {
 				rewind_sync_encode_state();
+				rewinding = 0;
+				limit_frames = 1;
 				if (!rewind_audio)
 					enable_audio = 1;
 			}
+			/* REWIND_STEP_CADENCE: do nothing, just flip existing frame */
 		} else {
 			core_run_frame();
 			rewind_push(0);
