@@ -38,6 +38,7 @@ static const struct {
 	CE_NUM(rewind_interval_ms_idx),
 	CE_NUM(rewind_audio),
 	CE_NUM(rewind_compress),
+	CE_NUM(ff_audio),
 	CE_NUM(rewind_lz4_acceleration_idx),
 };
 
