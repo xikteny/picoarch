@@ -4,6 +4,9 @@ core_platform ?= $(platform)
 
 CC        = $(CROSS_COMPILE)gcc
 SYSROOT   = $(shell $(CC) --print-sysroot)
+# I don't remember when I added the next two lines, but I'm pretty sure they were required for certain cores to build for the TrimUI Model S
+CXX       = $(CROSS_COMPILE)g++
+AR        = $(CROSS_COMPILE)ar
 
 PROCS     = -j4
 
@@ -22,16 +25,20 @@ CFLAGS += -DREVISION=\"$(GIT_REVISION)\"
 
 LDFLAGS    = -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -llz4 -lpthread -Wl,--gc-sections -flto
 
-# Unpolished or slow cores that build
-# EXTRA_CORES += mame2003_plus scummvm
+# Single core for testing purposes
+CORES = gambatte
+# The full set of original core settings are below, commented by "## "
 
-CORES = bluemsx chimerasnes ecwolf fceumm fmsx gambatte gme gpsp mame2000 mednafen_lynx mednafen_ngp mednafen_pce_fast mednafen_wswan pcsx_rearmed picodrive pokemini prboom quicknes smsplus-gx snes9x2002 snes9x2005 stella2014 tyrquake vitaquake2 $(EXTRA_CORES)
-
-ifneq ($(platform), trimui)
-CORES := $(CORES) dosbox-pure fake-08 fbalpha2012 snes9x2005_plus snes9x2010
-endif
-
-# CORES = dosbox-pure
+## # Unpolished or slow cores that build
+## # EXTRA_CORES += mame2003_plus scummvm
+##
+## CORES = bluemsx chimerasnes ecwolf fceumm fmsx gambatte gme gpsp mame2000 mednafen_lynx mednafen_ngp mednafen_pce_fast mednafen_wswan pcsx_rearmed picodrive pokemini prboom quicknes smsplus-gx snes9x2002 snes9x2005 stella2014 tyrquake vitaquake2 $(EXTRA_CORES)
+##
+## ifneq ($(platform), trimui)
+## CORES := $(CORES) dosbox-pure fake-08 fbalpha2012 snes9x2005_plus snes9x2010
+## endif
+##
+## # CORES = dosbox-pure
 
 bluemsx_REPO = https://github.com/libretro/blueMSX-libretro
 bluemsx_TYPES = rom,ri,mx1,mx2,dsk,col,sg,sc,cas,m3u
