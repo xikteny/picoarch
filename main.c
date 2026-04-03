@@ -375,6 +375,20 @@ static void perform_emu_action(void) {
 	emu_action action = eaction;
 	eaction = EACTION_NONE;
 
+	/* Momentary FF: deactivate when button is released */
+	if (prev_action == EACTION_MOMENTARY_FF && action != EACTION_MOMENTARY_FF) {
+		toggle_fast_forward(1); /* force off */
+	}
+	/* Momentary rewind: deactivate when button is released */
+	if (prev_action == EACTION_MOMENTARY_REWIND && action != EACTION_MOMENTARY_REWIND) {
+		if (rewinding) {
+			rewind_sync_encode_state();
+			rewinding = 0;
+			limit_frames = rewind_limit_frames_was;
+			enable_audio = rewind_enable_audio_was;
+		}
+	}
+
 	if (prev_action != EACTION_NONE && prev_action == action) return;
 
 	switch (action)
@@ -452,6 +466,7 @@ static void perform_emu_action(void) {
 		state_read();
 		rewind_on_state_change();
 		break;
+	case EACTION_MOMENTARY_FF:
 	case EACTION_TOGGLE_FF:
 		if (rewinding) break;   /* FF is incompatible with rewind */
 		toggle_fast_forward(0);
@@ -472,6 +487,17 @@ static void perform_emu_action(void) {
 			if (!rewind_audio)
 				enable_audio = 0;
 		}
+		break;
+	case EACTION_MOMENTARY_REWIND:
+		if (rewinding) break;   /* already rewinding */
+		toggle_fast_forward(1); /* force FF off */
+		rewind_limit_frames_was = limit_frames;
+		rewind_enable_audio_was = enable_audio;
+		rewind_prepare_decode();
+		rewinding = 1;
+		limit_frames = 0;
+		if (!rewind_audio)
+			enable_audio = 0;
 		break;
 	case EACTION_SCREENSHOT:
 		screenshot();

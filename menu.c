@@ -81,8 +81,10 @@ me_bind_action emuctrl_actions[] =
 	{ "Load State   ", 1 << EACTION_LOAD_STATE },
 	{ "Toggle HUD   ", 1 << EACTION_TOGGLE_HUD },
 	{ "Fast Forward ", 1 << EACTION_TOGGLE_FF },
+	{ "FF (Hold)    ", 1 << EACTION_MOMENTARY_FF },
 	{ "Screenshot   ", 1 << EACTION_SCREENSHOT },
 	{ "Rewind       ", 1 << EACTION_REWIND },
+	{ "Rewind (Hold)", 1 << EACTION_MOMENTARY_REWIND },
 #ifdef FUNKEY_S
 	{ "Pan Left     ", 1 << EACTION_PAN_DISPLAY_LEFT },
 	{ "Pan Right    ", 1 << EACTION_PAN_DISPLAY_RIGHT },
