@@ -28,6 +28,8 @@ extern int rewind_buffer_mb_idx;
 extern int rewind_interval_ms_idx;
 extern int rewind_audio;
 extern int rewind_compress;
+
+extern int ff_audio;
 extern int rewind_lz4_acceleration_idx;
 
 extern const int rewind_buffer_mb_values[];

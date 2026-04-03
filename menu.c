@@ -800,6 +800,10 @@ static const char *men_scale_filter[] =
 	NULL
 };
 
+static const char h_ff_audio[] =
+	"Keep audio playing during fast-forward.\n"
+	"Audio may sound choppy at high speeds.";
+
 static menu_entry e_menu_video_options[] =
 {
 	mee_onoff_h      ("Show FPS",                 0, show_fps, 1, h_show_fps),
@@ -813,6 +817,7 @@ static menu_entry e_menu_video_options[] =
 	mee_enum_h       ("Scaling filter",           0, scale_filter, men_scale_filter, h_scale_filter),
 	mee_range_h      ("Audio buffer",             0, audio_buffer_size, 1, 15, h_audio_buffer_size),
 	mee_onoff_h      ("Audio adjustment",         0, enable_drc, 1, h_enable_drc),
+	mee_onoff_h      ("Audio on fast-forward",     0, ff_audio, 1, h_ff_audio),
 	mee_end,
 };
 

@@ -81,7 +81,8 @@ static void toggle_fast_forward(int force_off)
 		limit_frames_was = limit_frames;
 		enable_audio_was = enable_audio;
 		limit_frames = 0;
-		enable_audio = 0;
+		if (!ff_audio)
+			enable_audio = 0;
 	} else {
 		if (override && override->fast_forward) {
 			const char *type_key = override->fast_forward->type_key;

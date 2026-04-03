@@ -26,6 +26,8 @@ int rewind_buffer_mb_idx    = 2;   /* index into rewind_buffer_mb_values[] → 8
 int rewind_interval_ms_idx  = 0;   /* index into rewind_interval_ms_values[] → 16 ms */
 int rewind_audio        = 0;
 int rewind_compress     = 1;
+
+int ff_audio            = 0;
 int rewind_lz4_acceleration_idx = 1; /* index into rewind_lz4_acceleration_values[] → 2 */
 
 const int rewind_buffer_mb_values[]        = { 2, 4, 8, 16, 32 };
