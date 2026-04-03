@@ -455,13 +455,18 @@ static const char credits[] =
 	" Hairo   : .sav/.srm option\n\n"
 #ifdef FUNKEY_S
 	" DrUm78  : screen rotation,\n"
-	"           cropped mode,\n"
-	"           manual mode,\n"
-	"           screen panning,\n"
-	"           bug fixes\n\n"
-	" xikteny : panning ideas";
+	"cropped mode, manual mode,\n"
+	"screen panning, bug fixes\n\n"
+	" xikteny : panning ideas,\n"
+	"rewind support (based on\n"
+	"NextUI code by Helaas),\n"
+	"fast-forward audio";
 #else
-	" DrUm78  : bug fixes";
+	" DrUm78  : bug fixes\n\n"
+	" xikteny : rewind support\n"
+	"(based on NextUI code by\n"
+	"Helaas), fast-forward\n"
+	"audio, minor build fixes";
 #endif
 
 static int menu_loop_disc(int id, int keys)

@@ -17,6 +17,12 @@ are licensed under the same terms.
 
 --------
 
+rewind code based on https://github.com/LoveRetro/NextUI as implemented
+by Helaas in https://github.com/LoveRetro/NextUI/pull/577 and others
+NextUI is licensed under the GNU GPL, v3.0
+
+--------
+
 The remainder of the code is licensed under the BSD 3-clause license:
 
 Copyright 2021 neonloop

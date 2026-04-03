@@ -1,3 +1,15 @@
+Fork of a fork of picoarch. Implements rewind support—heavily based upon NextUI's implementation—via Claude/Copilot. 
+
+Credits (that I know of):
+* [neonloop](https://git.crowdedwood.com/picoarch/) — the original and primary author of picoarch
+* [Hairo](https://git.crowdedwood.com/picoarch/commit/?id=16290853978c5c2c174e4dae7e8d341b05716fd1) — implementation of save file type options
+* [DrUm78](https://github.com/DrUm78/picoarch) — various enhancements (such as screen rotation/cropping/zooming/panning modes) and bug fixes primarily targetting the FunKey-S and clones
+* [Helaas](https://github.com/LoveRetro/NextUI/pull/577) — authoring NextUI's implementation of rewind
+
+**Note**: None of the above developers have been directly involved in or affiliated with this project in any way. All changes to this version of picoarch have—at this time—been vibe-coded solely by me. Don't blame any of them if this version of picoarch causes your device to explode! Don't blame me either… *this vibe-coded software is provided as-is*.
+
+Original documentation follows:
+___
 # picoarch - a libretro frontend designed for small screens and low power
 
 picoarch uses libpicofe and SDL to create a small frontend to libretro cores. It's designed for small (320x240 2.0-2.4") screen, low-powered devices like the Trimui Model S (PowKiddy A66) and FunKey S.
