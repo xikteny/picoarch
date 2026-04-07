@@ -10,6 +10,9 @@ picoarch
 /profile
 /system
 
+/libpicofe
+/libretro-common
+
 /bluemsx
 /dosbox-pure
 /fake-08
