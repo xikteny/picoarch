@@ -1,6 +1,8 @@
 [submodule "libpicofe"]
 	path = libpicofe
 	url = https://github.com/notaz/libpicofe
+	ignore = dirty
 [submodule "libretro-common"]
 	path = libretro-common
 	url = https://github.com/libretro/libretro-common
+	ignore = dirty
