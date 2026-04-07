@@ -51,25 +51,25 @@ typedef enum
 
 me_bind_action me_ctrl_actions[] =
 {
-	{ "UP:        ",  1 << RETRO_DEVICE_ID_JOYPAD_UP},
-	{ "DOWN:      ",  1 << RETRO_DEVICE_ID_JOYPAD_DOWN },
-	{ "LEFT:      ",  1 << RETRO_DEVICE_ID_JOYPAD_LEFT },
-	{ "RIGHT:     ",  1 << RETRO_DEVICE_ID_JOYPAD_RIGHT },
-	{ "A BUTTON:  ",  1 << RETRO_DEVICE_ID_JOYPAD_A },
-	{ "B BUTTON:  ",  1 << RETRO_DEVICE_ID_JOYPAD_B },
-	{ "X BUTTON:  ",  1 << RETRO_DEVICE_ID_JOYPAD_X },
-	{ "Y BUTTON:  ",  1 << RETRO_DEVICE_ID_JOYPAD_Y },
-	{ "START:     ",  1 << RETRO_DEVICE_ID_JOYPAD_START },
-	{ "SELECT:    ",  1 << RETRO_DEVICE_ID_JOYPAD_SELECT },
-	{ "L BUTTON:  ",  1 << RETRO_DEVICE_ID_JOYPAD_L },
-	{ "R BUTTON:  ",  1 << RETRO_DEVICE_ID_JOYPAD_R },
-	{ "L2 BUTTON:",   1 << RETRO_DEVICE_ID_JOYPAD_L2 },
-	{ "R2 BUTTON:",   1 << RETRO_DEVICE_ID_JOYPAD_R2 },
+	{ "UP       ",  1 << RETRO_DEVICE_ID_JOYPAD_UP},
+	{ "DOWN     ",  1 << RETRO_DEVICE_ID_JOYPAD_DOWN },
+	{ "LEFT     ",  1 << RETRO_DEVICE_ID_JOYPAD_LEFT },
+	{ "RIGHT    ",  1 << RETRO_DEVICE_ID_JOYPAD_RIGHT },
+	{ "A BUTTON ",  1 << RETRO_DEVICE_ID_JOYPAD_A },
+	{ "B BUTTON ",  1 << RETRO_DEVICE_ID_JOYPAD_B },
+	{ "X BUTTON ",  1 << RETRO_DEVICE_ID_JOYPAD_X },
+	{ "Y BUTTON ",  1 << RETRO_DEVICE_ID_JOYPAD_Y },
+	{ "START    ",  1 << RETRO_DEVICE_ID_JOYPAD_START },
+	{ "SELECT   ",  1 << RETRO_DEVICE_ID_JOYPAD_SELECT },
+	{ "L BUTTON ",  1 << RETRO_DEVICE_ID_JOYPAD_L },
+	{ "R BUTTON ",  1 << RETRO_DEVICE_ID_JOYPAD_R },
+	{ "L2 BUTTON ", 1 << RETRO_DEVICE_ID_JOYPAD_L2 },
+	{ "R2 BUTTON ", 1 << RETRO_DEVICE_ID_JOYPAD_R2 },
 #ifndef FUNKEY_S
-	{ "L3 BUTTON:",   1 << RETRO_DEVICE_ID_JOYPAD_L3 },
-	{ "R3 BUTTON:",   1 << RETRO_DEVICE_ID_JOYPAD_R3 },
+	{ "L3 BUTTON ", 1 << RETRO_DEVICE_ID_JOYPAD_L3 },
+	{ "R3 BUTTON ", 1 << RETRO_DEVICE_ID_JOYPAD_R3 },
 #endif
-	{ NULL,           0 }
+	{ NULL,       0 }
 };
 
 /* Must be a superset of all possible actions. This is used when
@@ -77,17 +77,17 @@ me_bind_action me_ctrl_actions[] =
  * it. */
 me_bind_action emuctrl_actions[] =
 {
-	{ "Save State:  ", 1 << EACTION_SAVE_STATE },
-	{ "Load State:  ", 1 << EACTION_LOAD_STATE },
-	{ "Toggle HUD:  ", 1 << EACTION_TOGGLE_HUD },
-	{ "Fast Forward:", 1 << EACTION_TOGGLE_FF },
-	{ "FF (Hold):   ", 1 << EACTION_MOMENTARY_FF },
-	{ "Screenshot:  ", 1 << EACTION_SCREENSHOT },
-	{ "Rewind:      ", 1 << EACTION_REWIND },
-	{ "Rew. (Hold): ", 1 << EACTION_MOMENTARY_REWIND },
+	{ "Save State   ", 1 << EACTION_SAVE_STATE },
+	{ "Load State   ", 1 << EACTION_LOAD_STATE },
+	{ "Toggle HUD   ", 1 << EACTION_TOGGLE_HUD },
+	{ "Fast Forward ", 1 << EACTION_TOGGLE_FF },
+	{ "FF (Hold)    ", 1 << EACTION_MOMENTARY_FF },
+	{ "Screenshot   ", 1 << EACTION_SCREENSHOT },
+	{ "Rewind       ", 1 << EACTION_REWIND },
+	{ "Rewind (Hold)", 1 << EACTION_MOMENTARY_REWIND },
 #ifdef FUNKEY_S
-	{ "Pan Left:    ", 1 << EACTION_PAN_DISPLAY_LEFT },
-	{ "Pan Right:   ", 1 << EACTION_PAN_DISPLAY_RIGHT },
+	{ "Pan Left     ", 1 << EACTION_PAN_DISPLAY_LEFT },
+	{ "Pan Right    ", 1 << EACTION_PAN_DISPLAY_RIGHT },
 #endif
 	{ NULL,            0 }
 };
@@ -462,13 +462,13 @@ static const char credits[] =
 	" xikteny : panning ideas,\n"
 	"rewind support (based on\n"
 	"NextUI code by Helaas),\n"
-	"FF audio/hotkey opts.";
+	"fast-forward audio";
 #else
 	" DrUm78  : bug fixes\n\n"
 	" xikteny : rewind support\n"
 	"(based on NextUI code by\n"
-	"Helaas), FF audio/key\n"
-	"opts., minor build fixes";
+	"Helaas), fast-forward\n"
+	"audio, minor build fixes";
 #endif
 
 static int menu_loop_disc(int id, int keys)
@@ -699,22 +699,22 @@ static const char h_show_cpu[]        = "Shows CPU usage (%).";
 #if (SCREEN_WIDTH >= 320)
 static const char h_enable_drc[]      = "Dynamically adjusts audio rate for smoother video.";
 
-static const char h_audio_buffer_size[] =
+static const char h_audio_buffer_size[]        =
 	"The size of the audio buffer, in frames. Higher\n"
 	"values reduce the risk of audio crackling at the\n"
 	"cost of delayed sound.";
 
-static const char h_scale_size[] =
+static const char h_scale_size[]        =
 	"How much to stretch the screen when scaling. NATIVE\n"
 	"does no stretching. SCALED uses the correct aspect\n"
 	"ratio. STRETCHED uses the whole screen.";
 
-static const char h_scale_filter[] =
+static const char h_scale_filter[]        =
 	"When stretching, how missing pixels are filled.\n"
 	"NEAREST copies the last pixel. SHARP keeps pixels\n"
 	"aligned where possible. SMOOTH adds a blur effect.";
 
-static const char h_use_srm[] =
+static const char h_use_srm[]        =
 	"Use .srm files for SRAM saves, needed for\n"
 	"compatibility with mainline RetroArch saves.\n"
 	"Save file compression needs to be off in RetroArch.";
@@ -727,35 +727,35 @@ static const char *men_scale_size[] =
 	NULL
 };
 #else
-static const char h_enable_drc[] =
+static const char h_enable_drc[]      =
 	"Dynamically adjusts audio rate for\n"
 	"smoother video.";
 
-static const char h_audio_buffer_size[] =
+static const char h_audio_buffer_size[]        =
 	"The audio buffer size, in frames.\n"
 	"Higher values reduce the risk of audio\n"
 	"crackling at the cost of delayed sound.";
 
-static const char h_scale_size[] =
+static const char h_scale_size[]        =
 	"NATIVE does no stretching. SCALED keeps\n"
 	"the correct aspect ratio. STRETCHED\n"
 	"uses the whole screen. CROPPED allows\n"
 	"resizing beyond the screen limit.\n"
 	"MANUAL allows manual screen resizing.";
 
-static const char h_zoom_level[] =
+static const char h_zoom_level[]        =
 	"Control the zoom level of the MANUAL\n"
 	"mode. Hotkeys Fn+left/right can be used\n"
 	"to change the zoom level (+/-10%) and\n"
 	"switch automatically to MANUAL mode.";
 
-static const char h_scale_filter[] =
+static const char h_scale_filter[]        =
 	"When stretching, how missing pixels\n"
 	"are filled. NEAREST copies the last\n"
 	"pixel. SHARP tries to keep pixels\n"
 	"aligned. SMOOTH adds a blur effect.";
 
-static const char h_use_srm[] =
+static const char h_use_srm[]        =
 	"Use .srm files for SRAM saves,\n"
 	"needed for compatibility with mainline\n"
 	"RetroArch saves. Save file compression\n"
@@ -813,18 +813,18 @@ static const char h_ff_audio[] =
 
 static menu_entry e_menu_video_options[] =
 {
-	mee_onoff_h      ("Show FPS:",                 0, show_fps, 1, h_show_fps),
-	mee_onoff_h      ("Show CPU usage:",           0, show_cpu, 1, h_show_cpu),
-	mee_enum_h       ("Display mode:",             0, scale_size, men_scale_size, h_scale_size),
+	mee_onoff_h      ("Show FPS",                 0, show_fps, 1, h_show_fps),
+	mee_onoff_h      ("Show CPU usage",           0, show_cpu, 1, h_show_cpu),
+	mee_enum_h       ("Display mode",             0, scale_size, men_scale_size, h_scale_size),
 #ifdef FUNKEY_S
-	mee_cust_h       ("Zoom level:",                  MB_OPT_CUSTOM, mh_zoom_level, mgn_zoom_level, h_zoom_level),
-	mee_enum_h       ("Screen panning:",           0, pan_display, men_pan_display, h_pan_display),
-	mee_enum_h       ("Screen rotation",           0, rotate_display, men_rotate_display, h_rotate_display),
+	mee_cust_h       ("Zoom level",                  MB_OPT_CUSTOM, mh_zoom_level, mgn_zoom_level, h_zoom_level),
+	mee_enum_h       ("Screen panning",           0, pan_display, men_pan_display, h_pan_display),
+	mee_enum_h       ("Screen rotation",          0, rotate_display, men_rotate_display, h_rotate_display),
 #endif
-	mee_enum_h       ("Scaling filter:",           0, scale_filter, men_scale_filter, h_scale_filter),
-	mee_range_h      ("Audio buffer:",             0, audio_buffer_size, 1, 15, h_audio_buffer_size),
-	mee_onoff_h      ("Audio adjustment:",         0, enable_drc, 1, h_enable_drc),
-	mee_onoff_h      ("Audio during FF:",          0, ff_audio, 1, h_ff_audio),
+	mee_enum_h       ("Scaling filter",           0, scale_filter, men_scale_filter, h_scale_filter),
+	mee_range_h      ("Audio buffer",             0, audio_buffer_size, 1, 15, h_audio_buffer_size),
+	mee_onoff_h      ("Audio adjustment",         0, enable_drc, 1, h_enable_drc),
+	mee_onoff_h      ("Audio on fast-forward",     0, ff_audio, 1, h_ff_audio),
 	mee_end,
 };
 
@@ -865,12 +865,12 @@ const char *config_label(int id, int *offs) {
 
 static menu_entry e_menu_config_options[] =
 {
-	mee_onoff_h      ("Use .srm saves:",          0, use_srm, 1, h_use_srm),
+	mee_onoff_h      ("Use .srm saves",           0, use_srm, 1, h_use_srm),
 	mee_label        (""),
 	mee_cust_nosave  ("Save global config",       MA_OPT_SAVECFG,      mh_savecfg, mgn_saveloadcfg),
 	mee_cust_nosave  ("Save game config",         MA_OPT_SAVECFG_GAME, mh_savecfg, mgn_saveloadcfg),
 	mee_handler_id_h ("Delete game config",       MA_OPT_RMCFG_GAME,   mh_rmcfg,   h_rm_config_game),
-	mee_handler_h    ("Restore Defaults",         mh_restore_defaults, h_restore_def),
+	mee_handler_h    ("Restore defaults",         mh_restore_defaults, h_restore_def),
 	mee_label        (""),
 	mee_label_mk     (0,                          config_label),
 	mee_end,
@@ -912,28 +912,28 @@ static const char h_rewind_lz4_accel[] =
 	"use more memory per snapshot.";
 
 static const char *men_rewind_buffer[] = {
-	"2MB", "4MB", "8MB", "16MB", "32MB",NULL
+	"2 MB", "4 MB", "8 MB", "16 MB", "32 MB", NULL
 };
 
 static const char *men_rewind_interval[] = {
-	"16ms (60fps)", "22ms (45fps)", "25ms (40fps)",
-	"33ms (30fps)", "50ms (20fps)", "66ms (15fps)",
-	"100ms (10fps)", "150ms (7fps)", "200ms (5fps)",
-	"300ms", "450ms", "600ms", NULL
+	"16 ms (~60 fps)", "22 ms (~45 fps)", "25 ms (~40 fps)",
+	"33 ms (~30 fps)", "50 ms (~20 fps)", "66 ms (~15 fps)",
+	"100 ms (~10 fps)", "150 ms (~7 fps)", "200 ms (~5 fps)",
+	"300 ms", "450 ms", "600 ms", NULL
 };
 
 static const char *men_rewind_lz4_accel[] = {
-	"1 (best)", "2 (default)", "4 (fast)", "8 (faster)", "12 (fastest)", NULL
+	"1 (best ratio)", "2 (default)", "4 (fast)", "8 (faster)", "12 (fastest)", NULL
 };
 
 static menu_entry e_menu_rewind_options[] =
 {
-	mee_onoff_h  ("Rewind:",             0, rewind_enabled,              1,                    h_rewind_enabled),
-	mee_enum_h   ("Buffer size:",        0, rewind_buffer_mb_idx,        men_rewind_buffer,    h_rewind_buffer_mb),
-	mee_enum_h   ("Interval:",           0, rewind_interval_ms_idx,      men_rewind_interval,  h_rewind_interval_ms),
-	mee_onoff_h  ("Audio:",              0, rewind_audio,                1,                    h_rewind_audio),
-	mee_onoff_h  ("Compression:",        0, rewind_compress,             1,                    h_rewind_compress),
-	mee_enum_h   ("LZ4 accel.:",         0, rewind_lz4_acceleration_idx, men_rewind_lz4_accel, h_rewind_lz4_accel),
+	mee_onoff_h  ("Rewind",              0, rewind_enabled,             1,   h_rewind_enabled),
+	mee_enum_h   ("Buffer size",         0, rewind_buffer_mb_idx,       men_rewind_buffer,    h_rewind_buffer_mb),
+	mee_enum_h   ("Interval",            0, rewind_interval_ms_idx,     men_rewind_interval,  h_rewind_interval_ms),
+	mee_onoff_h  ("Audio on rewind",     0, rewind_audio,               1,   h_rewind_audio),
+	mee_onoff_h  ("Compression",         0, rewind_compress,            1,   h_rewind_compress),
+	mee_enum_h   ("LZ4 acceleration",    0, rewind_lz4_acceleration_idx, men_rewind_lz4_accel, h_rewind_lz4_accel),
 	mee_end,
 };
 
