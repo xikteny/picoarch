@@ -77,17 +77,17 @@ me_bind_action me_ctrl_actions[] =
  * it. */
 me_bind_action emuctrl_actions[] =
 {
-	{ "Save State   ", 1 << EACTION_SAVE_STATE },
-	{ "Load State   ", 1 << EACTION_LOAD_STATE },
-	{ "Toggle HUD   ", 1 << EACTION_TOGGLE_HUD },
-	{ "Fast Forward ", 1 << EACTION_TOGGLE_FF },
-	{ "FF (Hold)    ", 1 << EACTION_MOMENTARY_FF },
-	{ "Screenshot   ", 1 << EACTION_SCREENSHOT },
-	{ "Rewind       ", 1 << EACTION_REWIND },
-	{ "Rewind (Hold)", 1 << EACTION_MOMENTARY_REWIND },
+	{ "Save State  ", 1 << EACTION_SAVE_STATE },
+	{ "Load State  ", 1 << EACTION_LOAD_STATE },
+	{ "Toggle HUD  ", 1 << EACTION_TOGGLE_HUD },
+	{ "Fast Forward", 1 << EACTION_TOGGLE_FF },
+	{ "FF (Hold)   ", 1 << EACTION_MOMENTARY_FF },
+	{ "Screenshot  ", 1 << EACTION_SCREENSHOT },
+	{ "Rewind      ", 1 << EACTION_REWIND },
+	{ "Rew. (Hold) ", 1 << EACTION_MOMENTARY_REWIND },
 #ifdef FUNKEY_S
-	{ "Pan Left     ", 1 << EACTION_PAN_DISPLAY_LEFT },
-	{ "Pan Right    ", 1 << EACTION_PAN_DISPLAY_RIGHT },
+	{ "Pan Left    ", 1 << EACTION_PAN_DISPLAY_LEFT },
+	{ "Pan Right   ", 1 << EACTION_PAN_DISPLAY_RIGHT },
 #endif
 	{ NULL,            0 }
 };
@@ -462,13 +462,13 @@ static const char credits[] =
 	" xikteny : panning ideas,\n"
 	"rewind support (based on\n"
 	"NextUI code by Helaas),\n"
-	"fast-forward audio";
+	"FF audio/hotkey opts.";
 #else
 	" DrUm78  : bug fixes\n\n"
 	" xikteny : rewind support\n"
 	"(based on NextUI code by\n"
-	"Helaas), fast-forward\n"
-	"audio, minor build fixes";
+	"Helaas), FF audio/key\n"
+	"opts., minor build fixes";
 #endif
 
 static int menu_loop_disc(int id, int keys)
@@ -824,7 +824,7 @@ static menu_entry e_menu_video_options[] =
 	mee_enum_h       ("Scaling filter",           0, scale_filter, men_scale_filter, h_scale_filter),
 	mee_range_h      ("Audio buffer",             0, audio_buffer_size, 1, 15, h_audio_buffer_size),
 	mee_onoff_h      ("Audio adjustment",         0, enable_drc, 1, h_enable_drc),
-	mee_onoff_h      ("Audio on fast-forward",     0, ff_audio, 1, h_ff_audio),
+	mee_onoff_h      ("Audio during FF",          0, ff_audio, 1, h_ff_audio),
 	mee_end,
 };
 
@@ -912,28 +912,28 @@ static const char h_rewind_lz4_accel[] =
 	"use more memory per snapshot.";
 
 static const char *men_rewind_buffer[] = {
-	"2 MB", "4 MB", "8 MB", "16 MB", "32 MB", NULL
+	"2MB", "4MB", "8MB", "16MB", "32MB", NULL
 };
 
 static const char *men_rewind_interval[] = {
-	"16 ms (~60 fps)", "22 ms (~45 fps)", "25 ms (~40 fps)",
-	"33 ms (~30 fps)", "50 ms (~20 fps)", "66 ms (~15 fps)",
-	"100 ms (~10 fps)", "150 ms (~7 fps)", "200 ms (~5 fps)",
-	"300 ms", "450 ms", "600 ms", NULL
+	"16ms (60fps)", "22ms (45fps)", "25ms (40fps)",
+	"33ms (30fps)", "50ms (20fps)", "66ms (15fps)",
+	"100ms (10fps)", "150ms (7fps)", "200ms (5fps)",
+	"300ms", "450ms", "600ms", NULL
 };
 
 static const char *men_rewind_lz4_accel[] = {
-	"1 (best ratio)", "2 (default)", "4 (fast)", "8 (faster)", "12 (fastest)", NULL
+	"1 (best)", "2 (default)", "4 (fast)", "8 (faster)", "12 (fastest)", NULL
 };
 
 static menu_entry e_menu_rewind_options[] =
 {
-	mee_onoff_h  ("Rewind",              0, rewind_enabled,             1,   h_rewind_enabled),
-	mee_enum_h   ("Buffer size",         0, rewind_buffer_mb_idx,       men_rewind_buffer,    h_rewind_buffer_mb),
-	mee_enum_h   ("Interval",            0, rewind_interval_ms_idx,     men_rewind_interval,  h_rewind_interval_ms),
-	mee_onoff_h  ("Audio on rewind",     0, rewind_audio,               1,   h_rewind_audio),
-	mee_onoff_h  ("Compression",         0, rewind_compress,            1,   h_rewind_compress),
-	mee_enum_h   ("LZ4 acceleration",    0, rewind_lz4_acceleration_idx, men_rewind_lz4_accel, h_rewind_lz4_accel),
+	mee_onoff_h  ("Rewind     ",    0, rewind_enabled,              1,                    h_rewind_enabled),
+	mee_enum_h   ("Buffer size",    0, rewind_buffer_mb_idx,        men_rewind_buffer,    h_rewind_buffer_mb),
+	mee_enum_h   ("Interval   ",    0, rewind_interval_ms_idx,      men_rewind_interval,  h_rewind_interval_ms),
+	mee_onoff_h  ("Audio      ",    0, rewind_audio,                1,                    h_rewind_audio),
+	mee_onoff_h  ("Compression",    0, rewind_compress,             1,                    h_rewind_compress),
+	mee_enum_h   ("LZ4 accel. ",    0, rewind_lz4_acceleration_idx, men_rewind_lz4_accel, h_rewind_lz4_accel),
 	mee_end,
 };
 
