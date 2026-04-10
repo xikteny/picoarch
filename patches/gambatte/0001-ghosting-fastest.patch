@@ -1,8 +1,8 @@
 diff --git a/libgambatte/libretro/libretro.cpp b/libgambatte/libretro/libretro.cpp
-index 61a2949..8f0e0aa 100644
+index 1c4471c..522054f 100644
 --- a/libgambatte/libretro/libretro.cpp
 +++ b/libgambatte/libretro/libretro.cpp
-@@ -123,7 +123,8 @@ enum frame_blend_method
+@@ -666,7 +666,8 @@ enum frame_blend_method
     FRAME_BLEND_NONE = 0,
     FRAME_BLEND_MIX,
     FRAME_BLEND_LCD_GHOSTING,
@@ -12,7 +12,7 @@ index 61a2949..8f0e0aa 100644
  };
  
  static enum frame_blend_method frame_blend_type  = FRAME_BLEND_NONE;
-@@ -177,6 +178,41 @@ static void blend_frames_mix(void)
+@@ -720,6 +721,41 @@ static void blend_frames_mix(void)
     }
  }
  
@@ -54,7 +54,7 @@ index 61a2949..8f0e0aa 100644
  static void blend_frames_lcd_ghost(void)
  {
     gambatte::video_pixel_t *curr   = video_buf;
-@@ -451,6 +487,11 @@ static void init_frame_blending(void)
+@@ -994,6 +1030,11 @@ static void init_frame_blending(void)
           if (!allocate_video_buf_acc())
              return;
           break;
@@ -66,7 +66,7 @@ index 61a2949..8f0e0aa 100644
        case FRAME_BLEND_NONE:
        default:
           /* Error condition - cannot happen
-@@ -494,6 +535,9 @@ static void init_frame_blending(void)
+@@ -1037,6 +1078,9 @@ static void init_frame_blending(void)
        case FRAME_BLEND_LCD_GHOSTING_FAST:
           blend_frames = blend_frames_lcd_ghost_fast;
           return;
@@ -76,7 +76,7 @@ index 61a2949..8f0e0aa 100644
        case FRAME_BLEND_NONE:
        default:
           /* Error condition - cannot happen
-@@ -568,6 +612,8 @@ static void check_frame_blend_variable(void)
+@@ -1111,6 +1155,8 @@ static void check_frame_blend_variable(void)
           frame_blend_type = FRAME_BLEND_LCD_GHOSTING;
        else if (!strcmp(var.value, "lcd_ghosting_fast"))
           frame_blend_type = FRAME_BLEND_LCD_GHOSTING_FAST;
@@ -86,10 +86,10 @@ index 61a2949..8f0e0aa 100644
  
     if (frame_blend_type == FRAME_BLEND_NONE)
 diff --git a/libgambatte/libretro/libretro_core_options.h b/libgambatte/libretro/libretro_core_options.h
-index ca5d896..e76c29f 100644
+index 84213f7..5fa72e7 100644
 --- a/libgambatte/libretro/libretro_core_options.h
 +++ b/libgambatte/libretro/libretro_core_options.h
-@@ -471,10 +471,11 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+@@ -612,10 +612,11 @@ struct retro_core_option_v2_definition option_defs_us[] = {
        NULL,
        NULL,
        {

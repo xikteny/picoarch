@@ -1,8 +1,8 @@
 diff --git a/Makefile.libretro b/Makefile.libretro
-index 0e8b073..aec4ea2 100644
+index 6f412c7..afa0571 100644
 --- a/Makefile.libretro
 +++ b/Makefile.libretro
-@@ -428,6 +428,20 @@ else ifneq (,$(findstring armv,$(platform)))
+@@ -431,6 +431,20 @@ else ifneq (,$(findstring armv,$(platform)))
  	endif
  	PLATFORM_DEFINES += -DARM
  
@@ -23,7 +23,7 @@ index 0e8b073..aec4ea2 100644
  # emscripten
  else ifeq ($(platform), emscripten)
  	TARGET := $(TARGET_NAME)_libretro_$(platform).bc
-@@ -678,6 +692,9 @@ endif
+@@ -681,6 +695,9 @@ endif
  ifeq ($(DEBUG), 1)
  	CFLAGS += -O0 -g
  	CXXFLAGS += -O0 -g
@@ -33,15 +33,15 @@ index 0e8b073..aec4ea2 100644
  else
  	CFLAGS += -O2
  	CXXFLAGS += -O2 -fno-exceptions -fno-rtti -DHAVE_STDINT_H -DNDEBUG
-@@ -698,6 +715,13 @@ ifeq ($(LOG_PERFORMANCE), 1)
+@@ -701,6 +718,13 @@ ifeq ($(LOG_PERFORMANCE), 1)
  	CXXFLAGS += -DLOG_PERFORMANCE
  endif
  
 +ifeq ($(PROFILE), GENERATE)
-+	CFLAGS	+= -fprofile-generate=./profile/$(TARGET_NAME)
-+	LDFLAGS	+= -lgcov
++	CFLAGS  += -fprofile-generate=./profile/$(TARGET_NAME)
++	LDFLAGS += -lgcov
 +else ifeq ($(PROFILE), APPLY)
-+	CFLAGS	+= -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
++	CFLAGS  += -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
 +endif
 +
  include Makefile.common
