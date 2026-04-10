@@ -3,7 +3,7 @@ Fork of a fork of picoarch. Implements rewind support—heavily based upon NextU
 Credits (that I know of):
 * [neonloop](https://git.crowdedwood.com/picoarch/) — the original and primary author of picoarch
 * [Hairo](https://git.crowdedwood.com/picoarch/commit/?id=16290853978c5c2c174e4dae7e8d341b05716fd1) — implementation of save file type options
-* [DrUm78](https://github.com/DrUm78/picoarch) — various enhancements (such as screen rotation/cropping/zooming/panning modes) and bug fixes primarily targetting the FunKey-S and clones
+* [DrUm78](https://github.com/DrUm78/picoarch) — various enhancements (such as screen rotation/cropping/zooming/panning modes and additional cores) and bug fixes primarily targeting the FunKey-S and clones
 * [Helaas](https://github.com/LoveRetro/NextUI/pull/577) — authoring NextUI's implementation of rewind
 
 **Note**: None of the above developers have been directly involved in or affiliated with this project in any way. All changes to this version of picoarch have—at this time—been vibe-coded solely by me. Don't blame any of them if this version of picoarch causes your device to explode! Don't blame me either… *this vibe-coded software is provided as-is*.
@@ -12,7 +12,7 @@ Original documentation follows:
 ___
 # picoarch - a libretro frontend designed for small screens and low power
 
-picoarch uses libpicofe and SDL to create a small frontend to libretro cores. It's designed for small (320x240 2.0-2.4") screen, low-powered devices like the Trimui Model S (PowKiddy A66) and FunKey S.
+picoarch uses libpicofe and SDL to create a small frontend to libretro cores. It's designed for small (320x240 2.0-2.4") screen, low-powered devices like the TrimUI Model S (A.K.A. the PowKiddy A66) and FunKey-S.
 
 ## Running
 
@@ -150,7 +150,7 @@ In order to make development and testing easier, the Makefile will pull and buil
 
 You will have to make changes when adding a core, since TrimUI is not a supported libretro platform. picoarch has a `patches/` directory containing needed changes to make cores work well in picoarch. Patches are applied in order after checking out the repository. 
 
-At a minimum, you need to add a `platform=trimui` section to the core Makefile if you are building for trimui.
+At a minimum, you need to add a `platform=trimui` section to the core Makefile if you are building for TrimUI.
 
 Some features and fixes are also included in `patches` -- it would be best to try to upstream them.
 
