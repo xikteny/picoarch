@@ -41,12 +41,15 @@ CORES = gambatte
 ## # CORES = dosbox-pure
 
 bluemsx_REPO = https://github.com/libretro/blueMSX-libretro
+bluemsx_LICENSE_URL = https://raw.githubusercontent.com/libretro/blueMSX-libretro/refs/heads/master/license.txt
 bluemsx_TYPES = rom,ri,mx1,mx2,dsk,col,sg,sc,cas,m3u
 
 chimerasnes_REPO = https://github.com/jamsilva/chimerasnes
+chimerasnes_LICENSE_URL = https://raw.githubusercontent.com/jamsilva/chimerasnes/refs/heads/master/LICENSES
 chimerasnes_TYPES = smc,fig,sfc,gd3,gd7,dx2,bsx,bs,swc,st
 
 dosbox-pure_REPO = https://github.com/schellingb/dosbox-pure
+dosbox-pure_LICENSE_URL = https://raw.githubusercontent.com/schellingb/dosbox-pure/refs/heads/main/LICENSE
 dosbox-pure_CORE = dosbox_pure_libretro.so
 dosbox-pure_TYPES = zip,dosz,exe,com,bat,iso,cue,ins,img,ima,vhd,jrc,tc,m3u,m3u8,conf
 dosbox-pure_FLAGS = STRIPCMD="$(CROSS_COMPILE)strip"
@@ -55,89 +58,117 @@ dosbox-pure_FLAGS += CYCLE_LIMIT=8200
 endif
 
 ecwolf_REPO = https://github.com/libretro/ecwolf
+ecwolf_LICENSE_URL = https://raw.githubusercontent.com/libretro/ecwolf/refs/heads/master/CONTRIBUTING.md
 ecwolf_BUILD_PATH = ecwolf/src/libretro
 ecwolf_TYPES = wl6,n3d,sod,sdm,wl1,pk3
 
 fake-08_REPO = https://github.com/jtothebell/fake-08
+fake-08_LICENSE_URL = https://raw.githubusercontent.com/jtothebell/fake-08/refs/heads/master/LICENSE.MD
 fake-08_BUILD_PATH = fake-08/platform/libretro
 fake-08_MAKEFILE = Makefile
 fake-08_CORE = fake08_libretro.so
 fake-08_TYPES = p8,png
 
 fbalpha2012_BUILD_PATH = fbalpha2012/svn-current/trunk
+fbalpha2012_LICENSE_URL = https://raw.githubusercontent.com/libretro/fbalpha2012/refs/heads/master/svn-current/trunk/src/license.txt
 fbalpha2012_MAKEFILE = makefile.libretro
 fbalpha2012_TYPES = zip
 
 fceumm_REPO = https://github.com/libretro/libretro-fceumm
+fceumm_LICENSE_URL = https://raw.githubusercontent.com/libretro/libretro-fceumm/refs/heads/master/Copying
 fceumm_MAKEFILE = Makefile.libretro
 fceumm_TYPES = fds,nes,unf,unif
 
 fmsx_REPO = https://github.com/libretro/fmsx-libretro
+fmsx_LICENSE_URL = https://raw.githubusercontent.com/libretro/fmsx-libretro/refs/heads/master/LICENSE
 fmsx_TYPES = rom,mx1,mx2,dsk,cas
 
 gambatte_REPO = https://github.com/libretro/gambatte-libretro
+gambatte_LICENSE_URL = https://raw.githubusercontent.com/libretro/gambatte-libretro/refs/heads/master/COPYING
 gambatte_TYPES = gb,gbc,dmg,zip
 
 gme_REPO = https://github.com/libretro/libretro-gme
+gme_LICENSE_URL = https://raw.githubusercontent.com/libretro/libretro-gme/refs/heads/master/LICENSE
 
+gpsp_LICENSE_URL = https://raw.githubusercontent.com/libretro/gpsp/refs/heads/master/COPYING
 gpsp_TYPES = gba,bin,zip
 
 mame2000_REPO = https://github.com/libretro/mame2000-libretro
+mame2000_LICENSE_URL = https://raw.githubusercontent.com/libretro/mame2000-libretro/refs/heads/master/readme.txt
 mame2000_TYPES = zip
 
 mame2003_plus_REPO = https://github.com/libretro/mame2003-plus-libretro
+mame2003_plus_LICENSE_URL = https://raw.githubusercontent.com/libretro/mame2003-plus-libretro/refs/heads/master/LICENSE.md
 mame2003_plus_TYPES = zip
 
 mednafen_lynx_REPO = https://github.com/libretro/beetle-lynx-libretro
+mednafen_lynx_LICENSE_URL = https://raw.githubusercontent.com/libretro/beetle-lynx-libretro/refs/heads/master/COPYING
 mednafen_lynx_TYPES = lnx,lyx,bll,o
 
 mednafen_ngp_REPO = https://github.com/libretro/beetle-ngp-libretro
+mednafen_ngp_LICENSE_URL = https://raw.githubusercontent.com/libretro/beetle-ngp-libretro/refs/heads/master/COPYING
 mednafen_ngp_TYPES = ngp,ngc,ngpc,npc
 
 mednafen_pce_fast_REPO = https://github.com/libretro/beetle-pce-fast-libretro
+mednafen_pce_fast_LICENSE_URL = https://raw.githubusercontent.com/libretro/beetle-pce-fast-libretro/refs/heads/master/COPYING
 mednafen_pce_fast_TYPES = pce,cue,ccd,chd,toc,m3u
 
 mednafen_wswan_REPO = https://github.com/libretro/beetle-wswan-libretro
+mednafen_wswan_LICENSE_URL = https://raw.githubusercontent.com/libretro/beetle-wswan-libretro/refs/heads/master/COPYING
 mednafen_wswan_TYPES = ws,wsc,pc2
 
+pcsx_rearmed_LICENSE_URL = https://raw.githubusercontent.com/libretro/pcsx_rearmed/refs/heads/master/COPYING
 pcsx_rearmed_MAKEFILE = Makefile.libretro
 pcsx_rearmed_TYPES = bin,cue,img,mdf,pbp,toc,cbn,m3u,chd
 
+picodrive_LICENSE_URL = https://raw.githubusercontent.com/libretro/picodrive/refs/heads/master/COPYING
 picodrive_MAKEFILE = Makefile.libretro
 picodrive_TYPES = bin,gen,smd,md,32x,cue,iso,chd,sms,gg,m3u,68k,sgd
 
+pokemini_LICENSE_URL = https://raw.githubusercontent.com/libretro/PokeMini/refs/heads/master/LICENSE
 pokemini_TYPES = min
 
 prboom_REPO = https://github.com/DrUm78/libretro-prboom
+prboom_LICENSE_URL = https://raw.githubusercontent.com/DrUm78/libretro-prboom/refs/heads/master/COPYING
 prboom_TYPES = wad,iwad,pwad,lmp
 
 quicknes_REPO = https://github.com/libretro/QuickNES_Core
+quicknes_LICENSE_URL = https://raw.githubusercontent.com/libretro/QuickNES_Core/refs/heads/master/LICENSE
 quicknes_TYPES = nes
 
+scummvm_LICENSE_URL = https://raw.githubusercontent.com/libretro/scummvm/refs/heads/master/COPYING
 scummvm_TYPES = scummvm
 
+smsplus-gx_LICENSE_URL = https://raw.githubusercontent.com/libretro/smsplus-gx/refs/heads/master/docs/license
 smsplus-gx_MAKEFILE = Makefile.libretro
 smsplus-gx_CORE = smsplus_libretro.so
 smsplus-gx_TYPES = sms,bin,rom,col,gg,sg
 
+snes9x2002_LICENSE_URL = https://raw.githubusercontent.com/libretro/snes9x2002/refs/heads/master/libretro/libretro.c
 snes9x2002_TYPES = smc,fig,sfc,gd3,gd7,dx2,bsx,swc,zip
 
 snes9x2005_REPO = https://github.com/libretro/snes9x2005
+snes9x2005_LICENSE_URL = https://raw.githubusercontent.com/libretro/snes9x2005/refs/heads/master/copyright
 snes9x2005_TYPES = smc,fig,sfc,gd3,gd7,dx2,bsx,swc,zip
 
 snes9x2005_plus_REPO = https://github.com/libretro/snes9x2005
+snes9x2005_plus_LICENSE_URL = https://raw.githubusercontent.com/libretro/snes9x2005/refs/heads/master/copyright
 snes9x2005_plus_FLAGS = USE_BLARGG_APU=1
 snes9x2005_plus_TYPES = smc,fig,sfc,gd3,gd7,dx2,bsx,swc,zip
 
+snes9x2010_LICENSE_URL = https://raw.githubusercontent.com/libretro/snes9x2010/refs/heads/master/LICENSE.txt
 snes9x2010_TYPES = smc,fig,sfc,gd3,gd7,dx2,bsx,swc,zip
 
 stella2014_REPO = https://github.com/libretro/stella2014-libretro
+stella2014_LICENSE_URL = https://raw.githubusercontent.com/libretro/stella2014-libretro/refs/heads/master/stella/license.txt
 stella2014_TYPES = a26,bin
 
 tyrquake_REPO = https://github.com/DrUm78/tyrquake
+tyrquake_LICENSE_URL = https://raw.githubusercontent.com/DrUm78/tyrquake/refs/heads/master/LICENSE.txt
 tyrquake_TYPES = pak
 
 vitaquake2_REPO = https://github.com/DrUm78/vitaquake2
+vitaquake2_LICENSE_URL = https://raw.githubusercontent.com/DrUm78/vitaquake2/refs/heads/libretro/LICENSE
 vitaquake2_TYPES = pak
 
 ifeq ($(platform), trimui)
@@ -566,7 +597,7 @@ define $1_DESKTOP
 [Desktop Entry]
 Name=$$($1_NAME)
 Comment=
-Exec=picoarch ./$1_libretro.so %f
+Exec=env LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH ./picoarch ./$1_libretro.so %f
 Icon=$$($1_ICON)
 SelectorBrowser=true
 SelectorDir=$($1_ROM_DIR)
@@ -578,14 +609,20 @@ Categories=emulators;
 endef
 
 picoarch-$(1).opk: $(BIN) $(1)_libretro.so
-	mkdir -p .opkdata
-	cp $1_libretro.so .opkdata
+	mkdir -pv .opkdata
+	mkdir -pv .opkdata/LICENSES
+	curl -L -o .opkdata/LICENSES/$(1)_libretro.txt $($(1)_LICENSE_URL)
+	curl -L -o .opkdata/LICENSES/liblz4.txt https://raw.githubusercontent.com/lz4/lz4/refs/heads/dev/lib/LICENSE
+	curl -L -o .opkdata/LICENSES/libpicofe.txt https://raw.githubusercontent.com/notaz/libpicofe/refs/heads/master/README
+	curl -L -o .opkdata/LICENSES/picoarch.txt https://raw.githubusercontent.com/xikteny/picoarch/refs/heads/main/LICENSE
+	mkdir -pv .opkdata/lib
+	cp -Lv /opt/FunKey-sdk/arm-funkey-linux-musleabihf/sysroot/usr/lib/liblz4.so.1 .opkdata/lib
 	$$(file >$$($(1)_NAME).funkey-s.desktop,$$($(1)_DESKTOP))
-	mv $$($(1)_NAME).funkey-s.desktop .opkdata
-	cp $(BIN) $(1)_libretro.so .opkdata
+	mv -v $$($(1)_NAME).funkey-s.desktop .opkdata
+	cp -v $(BIN) $(1)_libretro.so .opkdata
 	$(if $($(1)_ICON_URL),cd .opkdata && curl -L $($(1)_ICON_URL) -O && mogrify -resize '32x32>' $($(1)_ICON).png,)
 	cd .opkdata && mksquashfs * ../$$@ -all-root -no-xattrs -noappend -no-exports
-	rm -r .opkdata
+	rm -dRv .opkdata
 endef
 
 $(foreach core, $(CORES),$(eval $(call CORE_opk,$(core))))
