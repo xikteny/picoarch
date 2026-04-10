@@ -597,11 +597,11 @@ define $1_DESKTOP
 [Desktop Entry]
 Name=$$($1_NAME)
 Comment=
-Exec=env LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH ./picoarch ./$1_libretro.so %f
+Exec=env LD_LIBRARY_PATH=./lib:$$$$LD_LIBRARY_PATH ./picoarch ./$1_libretro.so %f
 Icon=$$($1_ICON)
 SelectorBrowser=true
 SelectorDir=$($1_ROM_DIR)
-SelectorFilter=$($1_TYPES),zip
+SelectorFilter=$($1_TYPES)
 Terminal=false
 Type=Application
 StartupNotify=true
