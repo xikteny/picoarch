@@ -44,6 +44,28 @@ CORES = gambatte
 
 include cores.mk
 
+.PHONY: print-%
+print-%:
+	@echo '$*=$($*)'
+
+.PHONY: all
+all: $(BIN) cores
+
+# install_licenses: $(1)=destination dir, $(2)=core name (optional)
+define install_licenses
+	mkdir -pv "$(1)/LICENSES"
+	$(if $(2),cp -v "$(2)/$($(2)_LICENSE)" "$(1)/LICENSES/$(2)_libretro.txt",)
+	curl -L -o "$(1)/LICENSES/liblz4.txt" https://raw.githubusercontent.com/lz4/lz4/refs/heads/dev/lib/LICENSE
+	cp -v "libpicofe/README" "$(1)/LICENSES/libpicofe.txt"
+	cp -v "LICENSE" "$(1)/LICENSES/picoarch.txt"
+endef
+
+# install_liblz4: $(1)=destination dir
+define install_liblz4
+	mkdir -pv "$(1)/lib"
+	cp -Lv $(SYSROOT)/usr/lib/liblz4.so.1 "$(1)/lib/"
+endef
+
 # Platform-specific SOURCES, CFLAGS, LDFLAGS, and dist targets
 -include platform/$(platform).mk
 
@@ -83,13 +105,6 @@ endif
 CFLAGS        += $(EXTRA_CFLAGS)
 
 SOFILES        = $(foreach core,$(CORES),$(core)_libretro.so)
-
-.PHONY: print-%
-print-%:
-	@echo '$*=$($*)'
-
-.PHONY: all
-all: $(BIN) cores
 
 libpicofe/.patched:
 	cd libpicofe && ($(foreach patch, $(sort $(wildcard patches/libpicofe/*.patch)), patch --no-backup-if-mismatch --merge -p1 < ../$(patch) &&) touch .patched)
@@ -149,18 +164,3 @@ clean-all: $(foreach core,$(CORES),clean-$(core)) clean
 .PHONY: distclean
 distclean: clean
 	rm -rf $(CORES) *.zip
-
-# install_licenses: $(1)=destination dir, $(2)=core name (optional)
-define install_licenses
-	mkdir -pv "$(1)/LICENSES"
-	$(if $(2),cp -v "$(2)/$($(2)_LICENSE)" "$(1)/LICENSES/$(2)_libretro.txt",)
-	curl -L -o "$(1)/LICENSES/liblz4.txt" https://raw.githubusercontent.com/lz4/lz4/refs/heads/dev/lib/LICENSE
-	cp -v "libpicofe/README" "$(1)/LICENSES/libpicofe.txt"
-	cp -v "LICENSE" "$(1)/LICENSES/picoarch.txt"
-endef
-
-# install_liblz4: $(1)=destination dir
-define install_liblz4
-	mkdir -pv "$(1)/lib"
-	cp -Lv $(SYSROOT)/usr/lib/liblz4.so.1 "$(1)/lib/"
-endef

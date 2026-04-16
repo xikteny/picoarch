@@ -120,7 +120,7 @@ define $1_DESKTOP
 [Desktop Entry]
 Name=$$($1_NAME)
 Comment=
-Exec=env LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./picoarch ./$1_libretro.so %f
+Exec=env LD_LIBRARY_PATH=./lib:$$$$LD_LIBRARY_PATH ./picoarch ./$1_libretro.so %f
 Icon=$$($1_ICON)
 SelectorBrowser=true
 SelectorDir=$($1_ROM_DIR)
@@ -149,7 +149,7 @@ define picoarch_DESKTOP
 [Desktop Entry]
 Name=picoarch
 Comment=Small screen libretro frontend
-Exec=picoarch
+Exec=env LD_LIBRARY_PATH=./lib:$$$$LD_LIBRARY_PATH ./picoarch
 Icon=sdlretro_icon
 Terminal=false
 Type=Application
@@ -170,7 +170,7 @@ define picoarch_lite_DESKTOP
 [Desktop Entry]
 Name=picoarch-lite
 Comment=Small screen libretro frontend
-Exec=picoarch %f
+Exec=env LD_LIBRARY_PATH=./lib:$$$$LD_LIBRARY_PATH ./picoarch %f
 Icon=sdlretro_icon
 SelectorBrowser=true
 SelectorDir=/mnt/Libretro/cores
