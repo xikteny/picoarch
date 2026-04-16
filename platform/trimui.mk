@@ -79,15 +79,15 @@ snes9x2005_PAK_NAME = Super Nintendo (2005)
 stella2014_ROM_DIR = 2600
 stella2014_PAK_NAME = Atari 2600
 
+.PHONY: dist-gmenu-section dist-gmenu-picoarch dist-gmenu dist-minui-picoarch dist-minui
+
 # -- gmenunx
 
-.PHONY: dist-gmenu-section
 dist-gmenu-section:
 	mkdir -pv pkg/gmenunx/Apps/picoarch-rewind
 	mkdir -pv pkg/gmenunx/Apps/gmenunx/sections/libretro
 	touch pkg/gmenunx/Apps/gmenunx/sections/libretro/.section
 
-.PHONY: dist-gmenu-picoarch
 dist-gmenu-picoarch: $(BIN) dist-gmenu-section
 	cp -v $(BIN) "pkg/gmenunx/Apps/picoarch-rewind"
 	$(file >pkg/gmenunx/Apps/picoarch-rewind/picoarch.sh,$(picoarch_LAUNCHER))
@@ -128,7 +128,6 @@ cd /mnt/SDCARD/Apps/picoarch-rewind
 LD_LIBRARY_PATH="./lib:$$LD_LIBRARY_PATH" ./picoarch "$$@"
 endef
 
-.PHONY: dist-gmenu
 dist-gmenu: $(foreach core, $(CORES), dist-gmenu-$(core)) dist-gmenu-picoarch
 	cp README.trimui.md pkg/
 
@@ -178,7 +177,6 @@ cd "$$EMU_DIR"
 LD_LIBRARY_PATH="$$EMU_DIR/lib:$$LD_LIBRARY_PATH" "$$EMU_DIR/$$EMU_EXE" &> "/mnt/SDCARD/.minui/logs/$$EMU_NAME.txt"
 endef
 
-.PHONY: dist-minui-picoarch
 dist-minui-picoarch: $(BIN) cores
 	mkdir -pv "pkg/MinUI/Games/picoarch.pak"
 	$(file >picoarch_launch.sh,$(picoarch_LAUNCH_SH))
@@ -192,7 +190,6 @@ $(foreach core, $(CORES),$(eval $(call CORE_pak_template,$(core))))
 ## disabled picoarch.pak
 ## dist-minui: $(foreach core, $(CORES), dist-minui-$(core)) dist-minui-picoarch
 ## 	cp README.trimui.md pkg/
-.PHONY: dist-minui
 dist-minui: $(foreach core, $(CORES), dist-minui-$(core))
 	cp README.trimui.md pkg/
 
