@@ -377,14 +377,21 @@ stella2014_PAK_NAME = Atari 2600
 # -- gmenunx
 
 dist-gmenu-section:
-	mkdir -p pkg/gmenunx/Apps/picoarch
-	mkdir -p pkg/gmenunx/Apps/gmenunx/sections/emulators
-	mkdir -p pkg/gmenunx/Apps/gmenunx/sections/libretro
+	mkdir -pv pkg/gmenunx/Apps/picoarch-rewind
+	mkdir -pv pkg/gmenunx/Apps/gmenunx/sections/libretro
 	touch pkg/gmenunx/Apps/gmenunx/sections/libretro/.section
 
 dist-gmenu-picoarch: $(BIN) dist-gmenu-section
-	cp $(BIN) pkg/gmenunx/Apps/picoarch
-	$(file >pkg/gmenunx/Apps/gmenunx/sections/emulators/picoarch,$(picoarch_SHORTCUT))
+	cp -v $(BIN) "pkg/gmenunx/Apps/picoarch-rewind"
+	$(file >pkg/gmenunx/Apps/picoarch-rewind/picoarch.sh,$(picoarch_LAUNCHER))
+	mkdir -pv "pkg/gmenunx/Apps/picoarch-rewind/LICENSES"
+	curl -L -o "pkg/gmenunx/Apps/picoarch-rewind/LICENSES/liblz4.txt" https://raw.githubusercontent.com/lz4/lz4/refs/heads/dev/lib/LICENSE
+	curl -L -o "pkg/gmenunx/Apps/picoarch-rewind/LICENSES/libpicofe.txt" https://raw.githubusercontent.com/notaz/libpicofe/refs/heads/master/README
+	curl -L -o "pkg/gmenunx/Apps/picoarch-rewind/LICENSES/picoarch.txt" https://raw.githubusercontent.com/xikteny/picoarch/refs/heads/main/LICENSE
+	mkdir -pv "pkg/gmenunx/Apps/picoarch-rewind/lib"
+	cp -Lv /opt/trimui-toolchain/arm-buildroot-linux-gnueabi/sysroot/usr/lib/liblz4.so.1 "pkg/gmenunx/Apps/picoarch-rewind/lib/"
+## disabled picoarch entry
+## 	$(file >pkg/gmenunx/Apps/gmenunx/sections/libretro/picoarch,$(picoarch_SHORTCUT))
 
 define CORE_gmenushortcut =
 
@@ -392,14 +399,15 @@ $1_NAME ?= $1
 
 define $1_SHORTCUT
 title=$$($1_NAME)
-exec=/mnt/SDCARD/Apps/picoarch/picoarch
-params=/mnt/SDCARD/Apps/picoarch/$1_libretro.so
+exec=/mnt/SDCARD/Apps/picoarch-rewind/picoarch.sh
+params=./$1_libretro.so
 selectordir=/mnt/SDCARD/Roms/$($1_ROM_DIR)
 selectorfilter=$($1_TYPES)
 endef
 
 dist-gmenu-$(1): $(BIN) $(1)_libretro.so dist-gmenu-picoarch dist-gmenu-section
-	cp $1_libretro.so pkg/gmenunx/Apps/picoarch
+	cp $1_libretro.so pkg/gmenunx/Apps/picoarch-rewind
+	curl -L -o "pkg/gmenunx/Apps/picoarch-rewind/LICENSES/$(1)_libretro.txt" $($(1)_LICENSE_URL)
 	$$(file >pkg/gmenunx/Apps/gmenunx/sections/libretro/$(1),$$($(1)_SHORTCUT))
 
 endef
@@ -408,7 +416,13 @@ $(foreach core, $(CORES),$(eval $(call CORE_gmenushortcut,$(core))))
 
 define picoarch_SHORTCUT
 title=$(BIN)
-exec=/mnt/SDCARD/Apps/picoarch/picoarch
+exec=/mnt/SDCARD/Apps/picoarch-rewind/picoarch.sh
+endef
+
+define picoarch_LAUNCHER
+#!/bin/sh
+cd /mnt/SDCARD/Apps/picoarch-rewind
+LD_LIBRARY_PATH="./lib:$$LD_LIBRARY_PATH" ./picoarch "$$@"
 endef
 
 dist-gmenu: $(foreach core, $(CORES), dist-gmenu-$(core)) dist-gmenu-picoarch
@@ -432,15 +446,22 @@ ROM=$$$${1}
 $($1_PAK_EXTRA)
 HOME="$$$$ROM_DIR"
 cd "$$$$EMU_DIR"
-"$$$$EMU_DIR/$$$$EMU_EXE" ./$1_libretro.so "$$$$ROM" &> "/mnt/SDCARD/.minui/logs/$$$$EMU_NAME.txt"
+LD_LIBRARY_PATH="$$$$EMU_DIR/lib:$$$$LD_LIBRARY_PATH" "$$$$EMU_DIR/$$$$EMU_EXE" ./$1_libretro.so "$$$$ROM" &> "/mnt/SDCARD/.minui/logs/$$$$EMU_NAME.txt"
 endef
 
 dist-minui-$(1): $(BIN) $(1)_libretro.so
-	mkdir -p "pkg/MinUI/Emus/$($1_PAK_NAME).pak"
+	mkdir -pv "pkg/MinUI/Emus/$($1_PAK_NAME).pak"
 	$$(file >$1_launch.sh,$$($1_LAUNCH_SH))
-	mv $1_launch.sh "pkg/MinUI/Emus/$($1_PAK_NAME).pak/launch.sh"
-	cp $(BIN) $1_libretro.so "pkg/MinUI/Emus/$($1_PAK_NAME).pak"
-
+	mv -v $1_launch.sh "pkg/MinUI/Emus/$($1_PAK_NAME).pak/launch.sh"
+	cp -v $(BIN) $1_libretro.so "pkg/MinUI/Emus/$($1_PAK_NAME).pak"
+	cp -v $(BIN) $1_libretro.so "pkg/MinUI/Emus/$($1_PAK_NAME).pak"
+	mkdir -pv "pkg/MinUI/Emus/$($1_PAK_NAME).pak/LICENSES"
+	curl -L -o "pkg/MinUI/Emus/$($1_PAK_NAME).pak/LICENSES/$(1)_libretro.txt" $($(1)_LICENSE_URL)
+	curl -L -o "pkg/MinUI/Emus/$($1_PAK_NAME).pak/LICENSES/liblz4.txt" https://raw.githubusercontent.com/lz4/lz4/refs/heads/dev/lib/LICENSE
+	curl -L -o "pkg/MinUI/Emus/$($1_PAK_NAME).pak/LICENSES/libpicofe.txt" https://raw.githubusercontent.com/notaz/libpicofe/refs/heads/master/README
+	curl -L -o "pkg/MinUI/Emus/$($1_PAK_NAME).pak/LICENSES/picoarch.txt" https://raw.githubusercontent.com/xikteny/picoarch/refs/heads/main/LICENSE
+	mkdir -pv "pkg/MinUI/Emus/$($1_PAK_NAME).pak/lib"
+	cp -Lv /opt/trimui-toolchain/arm-buildroot-linux-gnueabi/sysroot/usr/lib/liblz4.so.1 "pkg/MinUI/Emus/$($1_PAK_NAME).pak/lib/"
 endef
 
 define picoarch_LAUNCH_SH
@@ -455,18 +476,28 @@ needs-swap
 
 HOME="/mnt/SDCARD/Games/picoarch.pak/"
 cd "$$EMU_DIR"
-"$$EMU_DIR/$$EMU_EXE" &> "/mnt/SDCARD/.minui/logs/$$EMU_NAME.txt"
+LD_LIBRARY_PATH="$$EMU_DIR/lib:$$LD_LIBRARY_PATH" "$$EMU_DIR/$$EMU_EXE" &> "/mnt/SDCARD/.minui/logs/$$EMU_NAME.txt"
 endef
 
 dist-minui-picoarch: $(BIN) cores
-	mkdir -p "pkg/MinUI/Games/picoarch.pak"
+	mkdir -pv "pkg/MinUI/Games/picoarch.pak"
 	$(file >picoarch_launch.sh,$(picoarch_LAUNCH_SH))
-	mv picoarch_launch.sh "pkg/MinUI/Games/picoarch.pak/launch.sh"
-	cp $(BIN) $(SOFILES) "pkg/MinUI/Games/picoarch.pak"
+	mv -v picoarch_launch.sh "pkg/MinUI/Games/picoarch.pak/launch.sh"
+	cp -v $(BIN) $(SOFILES) "pkg/MinUI/Games/picoarch.pak"
+	mkdir -pv "pkg/MinUI/Games/picoarch.pak/LICENSES"
+	find "pkg/MinUI/Emus" -name "*_libretro.txt" -exec cp {} "pkg/MinUI/Games/picoarch.pak/LICENSES/" \;
+	curl -L -o "pkg/MinUI/Games/picoarch.pak/LICENSES/liblz4.txt" https://raw.githubusercontent.com/lz4/lz4/refs/heads/dev/lib/LICENSE
+	curl -L -o "pkg/MinUI/Games/picoarch.pak/LICENSES/libpicofe.txt" https://raw.githubusercontent.com/notaz/libpicofe/refs/heads/master/README
+	curl -L -o "pkg/MinUI/Games/picoarch.pak/LICENSES/picoarch.txt" https://raw.githubusercontent.com/xikteny/picoarch/refs/heads/main/LICENSE
+	mkdir -pv "pkg/MinUI/Games/picoarch.pak/lib"
+	cp -Lv /opt/trimui-toolchain/arm-buildroot-linux-gnueabi/sysroot/usr/lib/liblz4.so.1 "pkg/MinUI/Games/picoarch.pak/lib/"
 
 $(foreach core, $(CORES),$(eval $(call CORE_pak_template,$(core))))
 
-dist-minui: $(foreach core, $(CORES), dist-minui-$(core)) dist-minui-picoarch
+## disabled picoarch.pak
+## dist-minui: $(foreach core, $(CORES), dist-minui-$(core)) dist-minui-picoarch
+## 	cp README.trimui.md pkg/
+dist-minui: $(foreach core, $(CORES), dist-minui-$(core))
 	cp README.trimui.md pkg/
 
 endif # MINUI=1
@@ -597,7 +628,7 @@ define $1_DESKTOP
 [Desktop Entry]
 Name=$$($1_NAME)
 Comment=
-Exec=env LD_LIBRARY_PATH=./lib:$$$$LD_LIBRARY_PATH ./picoarch ./$1_libretro.so %f
+Exec=env LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./picoarch ./$1_libretro.so %f
 Icon=$$($1_ICON)
 SelectorBrowser=true
 SelectorDir=$($1_ROM_DIR)
@@ -616,7 +647,7 @@ picoarch-$(1).opk: $(BIN) $(1)_libretro.so
 	curl -L -o .opkdata/LICENSES/libpicofe.txt https://raw.githubusercontent.com/notaz/libpicofe/refs/heads/master/README
 	curl -L -o .opkdata/LICENSES/picoarch.txt https://raw.githubusercontent.com/xikteny/picoarch/refs/heads/main/LICENSE
 	mkdir -pv .opkdata/lib
-	cp -Lv /opt/FunKey-sdk/arm-funkey-linux-musleabihf/sysroot/usr/lib/liblz4.so.1 .opkdata/lib
+	cp -Lv /opt/FunKey-sdk/arm-funkey-linux-musleabihf/sysroot/usr/lib/liblz4.so.1 .opkdata/lib/
 	$$(file >$$($(1)_NAME).funkey-s.desktop,$$($(1)_DESKTOP))
 	mv -v $$($(1)_NAME).funkey-s.desktop .opkdata
 	cp -v $(BIN) $(1)_libretro.so .opkdata
