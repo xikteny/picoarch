@@ -53,13 +53,13 @@ print-%:
 .PHONY: all
 all: $(BIN) cores
 
-# install_licenses: $(1)=destination dir, $(2)=core name (optional)
+# install_licenses: $(1)=destination dir, $(2)=core name(s) (optional)
 define install_licenses
 	mkdir -pv "$(1)/LICENSES"
-	$(if $(2),cp -v "$(2)/$($(2)_LICENSE)" "$(1)/LICENSES/$(2)_libretro.txt",)
 	curl -L -o "$(1)/LICENSES/liblz4.txt" https://raw.githubusercontent.com/lz4/lz4/refs/heads/dev/lib/LICENSE
 	cp -v "libpicofe/README" "$(1)/LICENSES/libpicofe.txt"
 	cp -v "LICENSE" "$(1)/LICENSES/picoarch.txt"
+	$(foreach core,$(2),cp -v "$(core)/$($(core)_LICENSE)" "$(1)/LICENSES/$(core)_libretro.txt";)
 endef
 
 # install_liblz4: $(1)=destination dir
