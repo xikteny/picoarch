@@ -42,6 +42,8 @@ CORES = gambatte
 ##
 ## # CORES = dosbox-pure
 
+SOFILES        = $(foreach core,$(CORES),$(core)_libretro.so)
+
 include cores.mk
 
 .PHONY: print-%
@@ -103,8 +105,6 @@ ifeq ($(MMENU), 1)
 endif
 
 CFLAGS        += $(EXTRA_CFLAGS)
-
-SOFILES        = $(foreach core,$(CORES),$(core)_libretro.so)
 
 libpicofe/.patched:
 	cd libpicofe && ($(foreach patch, $(sort $(wildcard patches/libpicofe/*.patch)), patch --no-backup-if-mismatch --merge -p1 < ../$(patch) &&) touch .patched)

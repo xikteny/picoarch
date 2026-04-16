@@ -149,7 +149,7 @@ define picoarch_DESKTOP
 [Desktop Entry]
 Name=picoarch
 Comment=Small screen libretro frontend
-Exec=env LD_LIBRARY_PATH=./lib:$$$$LD_LIBRARY_PATH ./picoarch
+Exec=env LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./picoarch
 Icon=sdlretro_icon
 Terminal=false
 Type=Application
@@ -162,6 +162,8 @@ picoarch.opk: $(BIN) $(SOFILES)
 	$(file >picoarch.funkey-s.desktop,$(picoarch_DESKTOP))
 	mv picoarch.funkey-s.desktop .opkdata
 	cp $(BIN) $(SOFILES) .opkdata
+	$(call install_licenses,.opkdata,$1)
+	$(call install_liblz4,.opkdata)
 	cd .opkdata && curl -L -O https://raw.githubusercontent.com/FunKey-Project/sdlretro/master/data/sdlretro_icon.png
 	cd .opkdata && mksquashfs * ../$@ -all-root -no-xattrs -noappend -no-exports
 	rm -r .opkdata
@@ -170,7 +172,7 @@ define picoarch_lite_DESKTOP
 [Desktop Entry]
 Name=picoarch-lite
 Comment=Small screen libretro frontend
-Exec=env LD_LIBRARY_PATH=./lib:$$$$LD_LIBRARY_PATH ./picoarch %f
+Exec=env LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./picoarch %f
 Icon=sdlretro_icon
 SelectorBrowser=true
 SelectorDir=/mnt/Libretro/cores
@@ -186,6 +188,8 @@ picoarch-lite.opk: $(BIN)
 	$(file >picoarch.funkey-s.desktop,$(picoarch_lite_DESKTOP))
 	mv picoarch.funkey-s.desktop .opkdata
 	cp $(BIN) .opkdata
+	$(call install_licenses,.opkdata,$1)
+	$(call install_liblz4,.opkdata)
 	cd .opkdata && curl -L -O https://raw.githubusercontent.com/FunKey-Project/sdlretro/master/data/sdlretro_icon.png
 	cd .opkdata && mksquashfs * ../$@ -all-root -no-xattrs -noappend -no-exports
 	rm -r .opkdata
