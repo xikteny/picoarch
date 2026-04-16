@@ -1,83 +1,79 @@
-SOURCES += plat_trimui.c
-CFLAGS += -mcpu=arm926ej-s -mtune=arm926ej-s -fno-PIC -DCONTENT_DIR='"/mnt/SDCARD/Roms"'
-LDFLAGS += -fno-PIC
+SOURCES                   += plat_trimui.c
+CFLAGS                    += -mcpu=arm926ej-s -mtune=arm926ej-s -fno-PIC -DCONTENT_DIR='"/mnt/SDCARD/Roms"'
+LDFLAGS                   += -fno-PIC
 
-bluemsx_NAME = blueMSX
-bluemsx_ROM_DIR = MSX
-bluemsx_PAK_NAME = MSX (blueMSX)
+bluemsx_NAME               = blueMSX
+bluemsx_ROM_DIR            = MSX
+bluemsx_PAK_NAME           = MSX (blueMSX)
 
-fbalpha2012_NAME = fba2012
-fbalpha2012_ROM_DIR = ARCADE
-fbalpha2012_PAK_NAME = Arcade (FBA)
+fbalpha2012_NAME           = fba2012
+fbalpha2012_ROM_DIR        = ARCADE
+fbalpha2012_PAK_NAME       = Arcade (FBA)
 
-fceumm_ROM_DIR = FC
-fceumm_PAK_NAME = Nintendo (fceumm)
+fceumm_ROM_DIR             = FC
+fceumm_PAK_NAME            = Nintendo (fceumm)
 
-fmsx_NAME = fMSX
-fmsx_ROM_DIR = MSX
-fmsx_PAK_NAME = MSX
+fmsx_NAME                  = fMSX
+fmsx_ROM_DIR               = MSX
+fmsx_PAK_NAME              = MSX
 
-gambatte_ROM_DIR = GB
-gambatte_PAK_NAME = Game Boy
+gambatte_ROM_DIR           = GB
+gambatte_PAK_NAME          = Game Boy
 
-gpsp_ROM_DIR = GBA
-gpsp_PAK_NAME = Game Boy Advance
+gpsp_ROM_DIR               = GBA
+gpsp_PAK_NAME              = Game Boy Advance
 define gpsp_PAK_EXTRA
-
-needs-swap
-
+    needs-swap
 endef
 
-gme_ROM_DIR = MUSIC
-gme_PAK_NAME = Game Music
+gme_ROM_DIR                = MUSIC
+gme_PAK_NAME               = Game Music
 
-mame2000_ROM_DIR = ARCADE
-mame2000_PAK_NAME = Arcade
+mame2000_ROM_DIR           = ARCADE
+mame2000_PAK_NAME          = Arcade
 
-mame2003_plus_NAME = mame2003+
-mame2003_plus_ROM_DIR = ARCADE
-mame2003_plus_PAK_NAME = Arcade (MAME 2003-plus)
+mame2003_plus_NAME         = mame2003+
+mame2003_plus_ROM_DIR      = ARCADE
+mame2003_plus_PAK_NAME     = Arcade (MAME 2003-plus)
 
-mednafen_ngp_NAME = ngp
-mednafen_ngp_ROM_DIR = NGP
-mednafen_ngp_PAK_NAME = Neo Geo Pocket
+mednafen_ngp_NAME          = ngp
+mednafen_ngp_ROM_DIR       = NGP
+mednafen_ngp_PAK_NAME      = Neo Geo Pocket
 
-mednafen_pce_fast_NAME = pce_fast
-mednafen_pce_fast_ROM_DIR = PCE
+mednafen_pce_fast_NAME     = pce_fast
+mednafen_pce_fast_ROM_DIR  = PCE
 mednafen_pce_fast_PAK_NAME = TurboGrafx-16
 
-mednafen_wswan_NAME = wswan
-mednafen_wswan_ROM_DIR = WS
-mednafen_wswan_PAK_NAME = WonderSwan
+mednafen_wswan_NAME        = wswan
+mednafen_wswan_ROM_DIR     = WS
+mednafen_wswan_PAK_NAME    = WonderSwan
 
-picodrive_ROM_DIR = MD
-picodrive_PAK_NAME = Genesis
+picodrive_ROM_DIR          = MD
+picodrive_PAK_NAME         = Genesis
 
-pokemini_ROM_DIR = POKEMINI
-pokemini_PAK_NAME = PokeMini
+pokemini_ROM_DIR           = POKEMINI
+pokemini_PAK_NAME          = PokeMini
 
-pcsx_rearmed_ROM_DIR = PS
-pcsx_rearmed_PAK_NAME = PlayStation
+pcsx_rearmed_ROM_DIR       = PS
+pcsx_rearmed_PAK_NAME      = PlayStation
 define pcsx_rearmed_PAK_EXTRA
-
-needs-swap
-
+    needs-swap
 endef
 
-quicknes_ROM_DIR = FC
-quicknes_PAK_NAME = Nintendo
+quicknes_ROM_DIR           = FC
+quicknes_PAK_NAME          = Nintendo
 
-smsplus-gx_ROM_DIR = MS
-smsplus-gx_PAK_NAME = Game Gear
+smsplus-gx_ROM_DIR         = MS
+smsplus-gx_PAK_NAME        = Game Gear
 
-snes9x2002_ROM_DIR = SFC
-snes9x2002_PAK_NAME = Super Nintendo
+snes9x2002_ROM_DIR         = SFC
+snes9x2002_PAK_NAME        = Super Nintendo
 
-snes9x2005_ROM_DIR = SFC
-snes9x2005_PAK_NAME = Super Nintendo (2005)
+snes9x2005_ROM_DIR         = SFC
+snes9x2005_PAK_NAME        = Super Nintendo (2005)
 
-stella2014_ROM_DIR = 2600
-stella2014_PAK_NAME = Atari 2600
+stella2014_ROM_DIR         = 2600
+stella2014_PAK_NAME        = Atari 2600
 
 .PHONY: dist-gmenu-section dist-gmenu-picoarch dist-gmenu dist-minui-picoarch dist-minui
 
@@ -92,6 +88,7 @@ dist-gmenu-picoarch: $(BIN) dist-gmenu-section
 	cp -v $(BIN) "pkg/gmenunx/Apps/picoarch-rewind"
 	$(file >pkg/gmenunx/Apps/picoarch-rewind/picoarch.sh,$(picoarch_LAUNCHER))
 	$(call install_licenses,pkg/gmenunx/Apps/picoarch-rewind)
+	$(call install_liblz4,pkg/gmenunx/Apps/picoarch-rewind)
 ## disabled picoarch entry
 ## 	$(file >pkg/gmenunx/Apps/gmenunx/sections/libretro/picoarch,$(picoarch_SHORTCUT))
 
@@ -159,6 +156,7 @@ dist-minui-$(1): $(BIN) $(1)_libretro.so
 	mv -v $1_launch.sh "pkg/MinUI/Emus/$($1_PAK_NAME).pak/launch.sh"
 	cp -v $(BIN) $1_libretro.so "pkg/MinUI/Emus/$($1_PAK_NAME).pak"
 	$(call install_licenses,pkg/MinUI/Emus/$($1_PAK_NAME).pak,$1)
+	$(call install_liblz4,pkg/MinUI/Emus/$($1_PAK_NAME).pak)
 
 endef
 
@@ -183,6 +181,7 @@ dist-minui-picoarch: $(BIN) cores
 	mv -v picoarch_launch.sh "pkg/MinUI/Games/picoarch.pak/launch.sh"
 	cp -v $(BIN) $(SOFILES) "pkg/MinUI/Games/picoarch.pak"
 	$(call install_licenses,pkg/MinUI/Games/picoarch.pak)
+	$(call install_liblz4,pkg/MinUI/Games/picoarch.pak)
 	find "pkg/MinUI/Emus" -name "*_libretro.txt" -exec cp {} "pkg/MinUI/Games/picoarch.pak/LICENSES/" \;
 
 $(foreach core, $(CORES),$(eval $(call CORE_pak_template,$(core))))

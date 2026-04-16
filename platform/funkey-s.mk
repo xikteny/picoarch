@@ -134,6 +134,7 @@ endef
 picoarch-$(1).opk: $(BIN) $(1)_libretro.so
 	mkdir -pv .opkdata
 	$(call install_licenses,.opkdata,$1)
+	$(call install_liblz4,.opkdata)
 	$$(file >$$($(1)_NAME).funkey-s.desktop,$$($(1)_DESKTOP))
 	mv -v $$($(1)_NAME).funkey-s.desktop .opkdata
 	cp -v $(BIN) $(1)_libretro.so .opkdata
