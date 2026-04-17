@@ -1,0 +1,48 @@
+diff --git a/Makefile b/Makefile
+index 1f911e6..1d97bad 100755
+--- a/Makefile
++++ b/Makefile
+@@ -405,6 +405,20 @@ else
+         LIBM   :=
+         CFLAGS += -march=armv5te -mtune=arm926ej-s
+         CFLAGS += -fno-unroll-loops
++    else ifeq ($(platform), trimui) # TrimUI Model S
++        TARGET   := $(TARGET_NAME)_libretro.so
++        CC        = $(CROSS_COMPILE)gcc
++        CXX       = $(CROSS_COMPILE)g++
++        AR        = $(CROSS_COMPILE)ar
++        fpic     := -fno-PIC -nostdlib
++        SHARED   := -shared -Wl,--version-script=libretro-common/link.T -Wl,--no-undefined
++        CFLAGS   += -fomit-frame-pointer -ffast-math -mcpu=arm926ej-s -mtune=arm926ej-s -flto
++        CXXFLAGS += -fomit-frame-pointer -ffast-math -mcpu=arm926ej-s -mtune=arm926ej-s -flto
++        LDFLAGS  += -flto
++        OPTIMIZE := -Ofast -DNDEBUG
++        ifeq (,$(DEBUG))
++           LDFLAGS += -s
++        endif
+     else ifeq ($(platform), msvc)
+         OBJOUT = -Fo
+     else ifeq ($(platform), switch) # Nintendo Switch (libtransistor)
+@@ -465,6 +479,8 @@ else
+     else ifneq (,$(findstring msvc,$(platform)))
+         WARNINGS_DEFINES =
+         CODE_DEFINES     = -O2 -DNDEBUG
++    else ifneq (,$(OPTIMIZE))
++        CODE_DEFINES     = $(OPTIMIZE)
+     else
+         WARNINGS_DEFINES = \
+             -Wall \
+@@ -482,6 +498,13 @@ else
+             -ffunction-sections -Wl,--gc-sections
+     endif
+ 
++    ifeq ($(PROFILE), GENERATE)
++        CODE_DEFINES += -fprofile-generate=./profile/$(TARGET_NAME)
++        LDFLAGS      += -lgcov
++    else ifeq ($(PROFILE), APPLY)
++        CODE_DEFINES += -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
++    endif
++
+     COMMON_DEFINES += $(CODE_DEFINES) $(WARNINGS_DEFINES) $(fpic) $(LTO)
+     LDFLAGS        += $(LTO)
+     CFLAGS         += $(DEFINES) $(COMMON_DEFINES) -DGIT_VERSION=\"$(GIT_VERSION)\"
