@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index e400288..bb052f4 100644
+index e400288..78170b0 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -353,6 +353,23 @@ else ifeq ($(platform), gcw0)
@@ -26,16 +26,17 @@ index e400288..bb052f4 100644
  # Windows MSVC 2017 all architectures
  else ifneq (,$(findstring windows_msvc2017,$(platform)))
  
-@@ -615,10 +632,19 @@ ifneq (,$(findstring msvc,$(platform)))
+@@ -615,10 +632,20 @@ ifneq (,$(findstring msvc,$(platform)))
     CFLAGS   += -MT
     CXXFLAGS += -MT
  endif
-+else ifneq (,$(OPTIMIZE))
++ifneq (,$(OPTIMIZE))
 +   FLAGS    += $(OPTIMIZE)
 +else
     CFLAGS   += -O2 -DNDEBUG
     CXXFLAGS += -O2 -DNDEBUG
  endif
++endif
  
 +ifeq ($(PROFILE), GENERATE)
 +   FLAGS    += -fprofile-generate=./profile/$(TARGET_NAME)
