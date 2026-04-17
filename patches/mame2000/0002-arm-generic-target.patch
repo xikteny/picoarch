@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 57163e4..647eaaf 100644
+index 1c63c18..fd3e7cd 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -269,6 +269,38 @@ else ifeq ($(platform), classic_armv7_a7)
@@ -37,7 +37,7 @@ index 57163e4..647eaaf 100644
 +		CFLAGS += -mfloat-abi=hard
 +		ASFLAGS += -mfloat-abi=hard
 +	endif
-+  ARM = 1
++	ARM = 1
  
  # CTR(3DS)
  else ifeq ($(platform), ctr)
