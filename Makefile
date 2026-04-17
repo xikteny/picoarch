@@ -46,7 +46,7 @@ CFLAGS        += -DREVISION=\"$(GIT_REVISION)\"
 LDFLAGS        = -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -llz4 -lpthread -Wl,--gc-sections -flto
 
 # Single core for testing purposes
-CORES          = smsplus-gx
+CORES          = snes9x2002
 # The full set of core settings are below, commented by "## "
 ## CORES          = bluemsx fbalpha2012 fceumm fmsx gambatte gme gpsp mame2000 mame2003_plus mednafen_pce_fast picodrive quicknes smsplus-gx snes9x2002
 ## ifneq ($(platform), trimui)

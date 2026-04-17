@@ -1,5 +1,5 @@
 diff --git a/libretro/libretro.c b/libretro/libretro.c
-index 5f947ef..dc48f3d 100644
+index 3d863eb..426b45a 100644
 --- a/libretro/libretro.c
 +++ b/libretro/libretro.c
 @@ -105,10 +105,6 @@ typedef enum
@@ -13,7 +13,7 @@ index 5f947ef..dc48f3d 100644
  static frameskip_type_t frameskip_type           = FRAMESKIP_NONE;
  static unsigned frameskip_threshold              = 0;
  static unsigned frameskip_interval               = 0;
-@@ -638,7 +634,7 @@ void retro_run (void)
+@@ -674,7 +670,7 @@ void retro_run (void)
                    retro_audio_buff_underrun;
  
              if (!skip_frame ||
@@ -22,7 +22,7 @@ index 5f947ef..dc48f3d 100644
              {
                 skip_frame        = false;
                 frameskip_counter = 0;
-@@ -652,7 +648,7 @@ void retro_run (void)
+@@ -688,7 +684,7 @@ void retro_run (void)
                    (retro_audio_buff_occupancy < frameskip_threshold);
  
              if (!skip_frame ||
