@@ -1,0 +1,48 @@
+diff --git a/Makefile b/Makefile
+index a22eb5d..1f6278e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -383,6 +383,22 @@ else ifeq ($(platform), miyoo)
+ 	FLAGS += -fomit-frame-pointer -ffast-math -march=armv5te -mtune=arm926ej-s
+ 	fpic := -fPIC
+ 
++# TrimUI Model S
++else ifeq ($(platform), trimui)
++	TARGET := $(TARGET_NAME)_libretro.so
++	CC = $(CROSS_COMPILE)gcc
++	CXX = $(CROSS_COMPILE)g++
++	AR = $(CROSS_COMPILE)ar
++	fpic := -fno-PIC
++	SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
++	FLAGS + $(PTHREAD_FLAGS) -DHAVE_MKDIR
++	FLAGS += -fomit-frame-pointer -ffast-math -mcpu=arm926ej-s -mtune=arm926ej-s -flto
++	LDFLAGS += $(PTHREAD_FLAGS) -lrt -flto
++	OPTIMIZE := -Ofast -DNDEBUG
++	ifeq (,$(DEBUG))
++		LDFLAGS += -s
++	endif
++
+ # Windows MSVC 2003 Xbox 1
+ else ifeq ($(platform), xbox1_msvc2003)
+ TARGET := $(TARGET_NAME)_libretro_xdk1.lib
+@@ -637,9 +653,20 @@ ifneq (,$(findstring msvc,$(platform)))
+    CFLAGS   += -MT
+    CXXFLAGS += -MT
+ endif
++ifneq (,$(OPTIMIZE))
++   FLAGS    += $(OPTIMIZE)
++else
+    CFLAGS   += -O2 -DNDEBUG
+    CXXFLAGS += -O2 -DNDEBUG
+ endif
++endif
++
++ifeq ($(PROFILE), GENERATE)
++   FLAGS    += -fprofile-generate=./profile/$(TARGET_NAME)
++   LDFLAGS  += -lgcov
++else ifeq ($(PROFILE), APPLY)
++   FLAGS    += -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
++endif
+ 
+ ifeq (,$(findstring msvc,$(platform)))
+ FLAGS += -ffast-math
