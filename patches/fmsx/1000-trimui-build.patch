@@ -1,12 +1,14 @@
 diff --git a/Makefile b/Makefile
-index 6b4eb85..7281477 100644
+index c882840..bac967f 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -103,6 +103,20 @@ else ifeq ($(platform), miyoo)
+@@ -102,7 +102,21 @@ else ifeq ($(platform), miyoo)
+    SHARED := -shared -Wl,-version-script=link.T -Wl,-no-undefined
     CFLAGS += -march=armv5te -mtune=arm926ej-s
     CFLAGS += -fomit-frame-pointer -ffast-math  
-    
-+# trimui
+-   
++
++# TrimUI Model S
 +else ifeq ($(platform), trimui)
 +   TARGET := $(TARGET_NAME)_libretro.so
 +   CC = $(CROSS_COMPILE)gcc
@@ -23,24 +25,29 @@ index 6b4eb85..7281477 100644
  # iOS
  else ifneq (,$(findstring ios,$(platform)))
  
-@@ -532,6 +546,8 @@ endif
+@@ -544,9 +558,11 @@ else
+ endif
  
  ifeq ($(DEBUG), 1)
- 	CFLAGS += -O0 -g
+-	CFLAGS += -O0 -g
++   CFLAGS += -O0 -g
 +else ifneq (,$(OPTIMIZE))
-+	CFLAGS += $(OPTIMIZE)
++   CFLAGS += $(OPTIMIZE)
  else
- 	CFLAGS += -O2 -DNDEBUG
+-	CFLAGS += -O2 -DNDEBUG
++   CFLAGS += -O2 -DNDEBUG
  endif
-@@ -546,6 +562,13 @@ else
+ 
+ ifneq (,$(findstring msvc,$(platform)))
+@@ -559,6 +575,13 @@ else
  endif
  endif
  
 +ifeq ($(PROFILE), GENERATE)
-+	CFLAGS	+= -fprofile-generate=./profile/$(TARGET_NAME)
-+	LDFLAGS	+= -lgcov
++   CFLAGS  += -fprofile-generate=./profile/$(TARGET_NAME)
++   LDFLAGS += -lgcov
 +else ifeq ($(PROFILE), APPLY)
-+	CFLAGS	+= -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
++   CFLAGS  += -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
 +endif
 +
  DEFINES += -D__LIBRETRO__ $(PLATFORM_DEFINES)
