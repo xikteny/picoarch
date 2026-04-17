@@ -122,9 +122,9 @@ endef
 define picoarch_LAUNCHER
 #!/bin/sh
 
-cd /mnt/SDCARD/Apps/picoarch-rewind
+cd /mnt/SDCARD/Apps/picoarch
 
-LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./picoarch $$@
+LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./picoarch "$$@"
 endef
 
 dist-gmenu: $(foreach core, $(CORES), dist-gmenu-$(core)) dist-gmenu-picoarch
