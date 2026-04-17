@@ -80,17 +80,17 @@ stella2014_PAK_NAME        = Atari 2600
 # -- gmenunx
 
 dist-gmenu-section:
-	mkdir -pv pkg/gmenunx/Apps/picoarch-rewind
+	mkdir -pv pkg/gmenunx/Apps/picoarch
+	mkdir -pv pkg/gmenunx/Apps/gmenunx/sections/emulators
 	mkdir -pv pkg/gmenunx/Apps/gmenunx/sections/libretro
 	touch pkg/gmenunx/Apps/gmenunx/sections/libretro/.section
 
 dist-gmenu-picoarch: $(BIN) dist-gmenu-section
-	cp -v $(BIN) "pkg/gmenunx/Apps/picoarch-rewind"
-	$(file >pkg/gmenunx/Apps/picoarch-rewind/picoarch.sh,$(picoarch_LAUNCHER))
-	$(call install_licenses,pkg/gmenunx/Apps/picoarch-rewind)
-	$(call install_liblz4,pkg/gmenunx/Apps/picoarch-rewind)
-## disabled picoarch entry
-## 	$(file >pkg/gmenunx/Apps/gmenunx/sections/libretro/picoarch,$(picoarch_SHORTCUT))
+	cp -v $(BIN) pkg/gmenunx/Apps/picoarch
+	$(file >pkg/gmenunx/Apps/picoarch/picoarch.sh,$(picoarch_LAUNCHER))
+	$(call install_licenses,pkg/gmenunx/Apps/picoarch)
+	$(call install_liblz4,pkg/gmenunx/Apps/picoarch)
+	$(file >pkg/gmenunx/Apps/gmenunx/sections/emulators/picoarch,$(picoarch_SHORTCUT))
 
 define CORE_gmenushortcut =
 
@@ -98,16 +98,16 @@ $1_NAME ?= $1
 
 define $1_SHORTCUT
 title=$$($1_NAME)
-exec=/mnt/SDCARD/Apps/picoarch-rewind/picoarch.sh
-params=./$1_libretro.so
+exec=/mnt/SDCARD/Apps/picoarch/picoarch.sh
+params=/mnt/SDCARD/Apps/picoarch/$1_libretro.so
 selectordir=/mnt/SDCARD/Roms/$($1_ROM_DIR)
 selectorfilter=$($1_TYPES)
 endef
 
 .PHONY: dist-gmenu-$(1)
 dist-gmenu-$(1): $(BIN) $(1)_libretro.so dist-gmenu-picoarch dist-gmenu-section
-	cp $1_libretro.so pkg/gmenunx/Apps/picoarch-rewind
-	cp -v "$(1)/$($(1)_LICENSE)" "pkg/gmenunx/Apps/picoarch-rewind/LICENSES/$(1)_libretro.txt"
+	cp -v $1_libretro.so pkg/gmenunx/Apps/picoarch
+	cp -v $(1)/$($(1)_LICENSE) pkg/gmenunx/Apps/picoarch/LICENSES/$(1)_libretro.txt
 	$$(file >pkg/gmenunx/Apps/gmenunx/sections/libretro/$(1),$$($(1)_SHORTCUT))
 
 endef
@@ -116,13 +116,15 @@ $(foreach core, $(CORES),$(eval $(call CORE_gmenushortcut,$(core))))
 
 define picoarch_SHORTCUT
 title=$(BIN)
-exec=/mnt/SDCARD/Apps/picoarch-rewind/picoarch.sh
+exec=/mnt/SDCARD/Apps/picoarch/picoarch.sh
 endef
 
 define picoarch_LAUNCHER
 #!/bin/sh
+
 cd /mnt/SDCARD/Apps/picoarch-rewind
-LD_LIBRARY_PATH="./lib:$$LD_LIBRARY_PATH" ./picoarch "$$@"
+
+LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./picoarch $$@
 endef
 
 dist-gmenu: $(foreach core, $(CORES), dist-gmenu-$(core)) dist-gmenu-picoarch
@@ -176,26 +178,23 @@ LD_LIBRARY_PATH="$$EMU_DIR/lib:$$LD_LIBRARY_PATH" "$$EMU_DIR/$$EMU_EXE" &> "/mnt
 endef
 
 dist-minui-picoarch: $(BIN) cores
-	mkdir -pv "pkg/MinUI/Games/picoarch.pak"
+	mkdir -pv pkg/MinUI/Games/picoarch.pak
 	$(file >picoarch_launch.sh,$(picoarch_LAUNCH_SH))
-	mv -v picoarch_launch.sh "pkg/MinUI/Games/picoarch.pak/launch.sh"
-	cp -v $(BIN) $(SOFILES) "pkg/MinUI/Games/picoarch.pak"
+	mv -v picoarch_launch.sh pkg/MinUI/Games/picoarch.pak/launch.sh
+	cp -v $(BIN) $(SOFILES) pkg/MinUI/Games/picoarch.pak
 	$(call install_licenses,pkg/MinUI/Games/picoarch.pak)
 	$(call install_liblz4,pkg/MinUI/Games/picoarch.pak)
-	find "pkg/MinUI/Emus" -name "*_libretro.txt" -exec cp {} "pkg/MinUI/Games/picoarch.pak/LICENSES/" \;
+	find pkg/MinUI/Emus -name "*_libretro.txt" -exec cp {} pkg/MinUI/Games/picoarch.pak/LICENSES/ \;
 
 $(foreach core, $(CORES),$(eval $(call CORE_pak_template,$(core))))
 
-## disabled picoarch.pak
-## dist-minui: $(foreach core, $(CORES), dist-minui-$(core)) dist-minui-picoarch
-## 	cp README.trimui.md pkg/
-dist-minui: $(foreach core, $(CORES), dist-minui-$(core))
+dist-minui: $(foreach core, $(CORES), dist-minui-$(core)) dist-minui-picoarch
 	cp README.trimui.md pkg/
 
 endif # MINUI=1
 
 picoarch.zip:
 	$(MAKE) platform=trimui PROFILE=APPLY clean-all dist-gmenu
-	rm -f $(OBJS) $(BIN)
+	rm -fv $(OBJS) $(BIN)
 	$(MAKE) platform=trimui PROFILE=APPLY EXTRA_CFLAGS=-Wno-error=coverage-mismatch MINUI=1 dist-minui
 	cd pkg && zip -r ../picoarch.zip *

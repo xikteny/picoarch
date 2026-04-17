@@ -1,19 +1,36 @@
-# Global definitions
+## Global definitions
+# default to native Linux platform
 platform      ?= unix
 core_platform ?= $(platform)
 
+# use cross-compilation if the environment has it defined
 CC             = $(CROSS_COMPILE)gcc
 SYSROOT        = $(shell $(CC) --print-sysroot)
 CXX            = $(CROSS_COMPILE)g++
 AR             = $(CROSS_COMPILE)ar
 
+# use four threads when building
 PROCS          = -j4
 
+# base picoarch sources
 SOURCES        = libpicofe/input.c libpicofe/in_sdl.c libpicofe/linux/in_evdev.c libpicofe/linux/plat.c libpicofe/fonts.c libpicofe/readpng.c libpicofe/config_file.c cheat.c config.c content.c core.c menu.c main.c options.c overrides.c patch.c rewind.c scale.c unzip.c util.c video.c
 
+# name of picoarch binary
 BIN            = picoarch
 
+# Blank environmental compiler flags
 unexport CFLAGS
+CFLAGS :=
+unexport CPPFLAGS
+CPPFLAGS :=
+unexport CXXFLAGS
+CXXFLAGS :=
+unexport LDFLAGS
+LDFLAGS :=
+unexport FCFLAGS
+FCFLAGS :=
+unexport FFLAGS
+FFLAGS :=
 
 # Base CFLAGS: warnings, includes, defines
 CFLAGS        += -Wall
@@ -25,12 +42,12 @@ CFLAGS        += -MMD -MP
 GIT_REVISION  ?= $(shell git rev-parse --short HEAD || echo unknown)
 CFLAGS        += -DREVISION=\"$(GIT_REVISION)\"
 
+# base linker flags
 LDFLAGS        = -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -llz4 -lpthread -Wl,--gc-sections -flto
 
 # Single core for testing purposes
 CORES = gambatte
 # The full set of original core settings are below, commented by "## "
-
 ## # Unpolished or slow cores that build
 ## # EXTRA_CORES += mame2003_plus scummvm
 ##
@@ -43,7 +60,6 @@ CORES = gambatte
 ## # CORES = dosbox-pure
 
 SOFILES        = $(foreach core,$(CORES),$(core)_libretro.so)
-
 include cores.mk
 
 .PHONY: print-%
@@ -56,7 +72,7 @@ all: $(BIN) cores
 # install_licenses: $(1)=destination dir, $(2)=core name(s) (optional)
 define install_licenses
 	mkdir -pv "$(1)/LICENSES"
-	curl -L -o "$(1)/LICENSES/liblz4.txt" https://raw.githubusercontent.com/lz4/lz4/refs/heads/dev/lib/LICENSE
+	curl -L -o "$(1)/LICENSES/liblz4.txt" "https://raw.githubusercontent.com/lz4/lz4/refs/heads/dev/lib/LICENSE"
 	cp -v "libpicofe/README" "$(1)/LICENSES/libpicofe.txt"
 	cp -v "LICENSE" "$(1)/LICENSES/picoarch.txt"
 	$(foreach core,$(2),cp -v "$(core)/$($(core)_LICENSE)" "$(1)/LICENSES/$(core)_libretro.txt";)
@@ -65,7 +81,7 @@ endef
 # install_liblz4: $(1)=destination dir
 define install_liblz4
 	mkdir -pv "$(1)/lib"
-	cp -Lv $(SYSROOT)/usr/lib/liblz4.so.1 "$(1)/lib/"
+	cp -Lv "$(SYSROOT)/usr/lib/liblz4.so.1" "$(1)/lib/"
 endef
 
 # Platform-specific SOURCES, CFLAGS, LDFLAGS, and dist targets
@@ -137,10 +153,10 @@ $(1):
 $(1)/$(1)_libretro.so: $(1)
 	cd $$($1_BUILD_PATH) && $$($1_MAKE) $(PROCS)
 $(1)_libretro.so: $(1)/$(1)_libretro.so
-	cp $$($1_BUILD_PATH)/$(if $($(1)_CORE),$($(1)_CORE),$(1)_libretro.so) $(1)_libretro.so
+	cp -v $$($1_BUILD_PATH)/$(if $($(1)_CORE),$($(1)_CORE),$(1)_libretro.so) $(1)_libretro.so
 clean-$(1):
 	test ! -d $(1) || cd $$($1_BUILD_PATH) && $$($1_MAKE) clean
-	rm -f $(1)_libretro.so
+	rm -fv $(1)_libretro.so
 endef
 
 $(foreach core,$(CORES),$(eval $(call CORE_template,$(core))))
@@ -150,17 +166,17 @@ cores: $(SOFILES)
 
 .PHONY: clean-picoarch
 clean-picoarch:
-	rm -f $(DEPS) $(OBJS) $(BIN)
-	rm -rf pkg
-	rm -f *.opk
+	rm -fv $(DEPS) $(OBJS) $(BIN)
+	rm -rfv pkg
+	rm -fv *.opk
 
 .PHONY: clean
 clean: clean-libpicofe clean-picoarch
-	rm -f $(SOFILES)
+	rm -fv $(SOFILES)
 
 .PHONY: clean-all
 clean-all: $(foreach core,$(CORES),clean-$(core)) clean
 
 .PHONY: distclean
 distclean: clean
-	rm -rf $(CORES) *.zip
+	rm -rfv $(CORES) *.zip

@@ -1,12 +1,12 @@
-## Global definitions
+## platform definitions
+# build flags
 SOURCES       += plat_funkey.c funkey/fk_menu.c funkey/fk_instant_play.c
 CFLAGS        += -DCONTENT_DIR='"/mnt"' -DFUNKEY_S
 LDFLAGS       += -fPIC
 LDFLAGS       += -lSDL_image -lSDL_ttf # For fk_menu
 core_platform  = unix-armv7-hardfloat-neon
 
-
-## Core definitions
+# core settings
 bluemsx_NAME               = blueMSX
 bluemsx_ROM_DIR            = /mnt/MSX
 bluemsx_ICON_URL           = https://raw.githubusercontent.com/MiyooCFW/gmenu2x/gmenunx/assets/miyoo/skins/PixUI/icons/dingux-msx.png
@@ -115,7 +115,7 @@ stella2014_ICON            = stella-od
 stella2014_ROM_DIR         = /mnt/Atari 2600
 
 
-## Build core .OPKs
+## build core .OPKs
 define CORE_opk =
 
 $1_NAME ?= $1
@@ -144,13 +144,13 @@ picoarch-$(1).opk: $(BIN) $(1)_libretro.so
 	cp -v $(BIN) $(1)_libretro.so .opkdata
 	$(if $($(1)_ICON_URL),cd .opkdata && curl -L $($(1)_ICON_URL) -O && mogrify -resize '32x32>' $($(1)_ICON).png,)
 	cd .opkdata && mksquashfs * ../$$@ -all-root -no-xattrs -noappend -no-exports
-	rm -dRv .opkdata
+	rm -rfv .opkdata
 endef
 
 $(foreach core, $(CORES),$(eval $(call CORE_opk,$(core))))
 
 
-## Build picoarch.opk
+## build picoarch.opk
 define picoarch_DESKTOP
 [Desktop Entry]
 Name=picoarch
@@ -172,10 +172,10 @@ picoarch.opk: $(BIN) $(SOFILES)
 	$(call install_liblz4,.opkdata)
 	cd .opkdata && curl -L -O https://raw.githubusercontent.com/FunKey-Project/sdlretro/master/data/sdlretro_icon.png
 	cd .opkdata && mksquashfs * ../$@ -all-root -no-xattrs -noappend -no-exports
-	rm -rv .opkdata
+	rm -rfv .opkdata
 
 
-## Build picoarch-lite.opk
+## build picoarch-lite.opk
 define picoarch_lite_DESKTOP
 [Desktop Entry]
 Name=picoarch-lite
@@ -200,10 +200,10 @@ picoarch-lite.opk: $(BIN)
 	$(call install_liblz4,.opkdata)
 	cd .opkdata && curl -L -O https://raw.githubusercontent.com/FunKey-Project/sdlretro/master/data/sdlretro_icon.png
 	cd .opkdata && mksquashfs * ../$@ -all-root -no-xattrs -noappend -no-exports
-	rm -rv .opkdata
+	rm -rfv .opkdata
 
 
-## Build zip files for distribution
+## build zip files for distribution
 picoarch-funkey-s.zip: picoarch.opk $(foreach core, $(CORES), picoarch-$(core).opk)
 	rm -fv $@
 	zip $@ $^
@@ -211,10 +211,10 @@ picoarch-funkey-s.zip: picoarch.opk $(foreach core, $(CORES), picoarch-$(core).o
 cores-funkey-s.zip: $(SOFILES)
 	rm -fv $@
 	mkdir -pv .zipdata/LICENSES
-	$(foreach core,$(CORES),cp -v "$(core)/$($(core)_LICENSE)" ".zipdata/LICENSES/$(core)_libretro.txt";)
+	$(foreach core,$(CORES),cp -v $(core)/$($(core)_LICENSE) .zipdata/LICENSES/$(core)_libretro.txt;)
 	cp -v $(SOFILES) .zipdata/
 	cd .zipdata && zip -r ../$@ *
-	rm -rv .zipdata
+	rm -rfv .zipdata
 
 .PHONY: dist
 dist: picoarch-lite.opk picoarch-funkey-s.zip cores-funkey-s.zip
