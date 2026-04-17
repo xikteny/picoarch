@@ -194,7 +194,7 @@ dist-minui: $(foreach core, $(CORES), dist-minui-$(core)) dist-minui-picoarch
 endif # MINUI=1
 
 picoarch.zip:
-	$(MAKE) platform=trimui PROFILE=APPLY clean-all dist-gmenu
+	$(MAKE) platform=trimui $(if $(PROFILE),PROFILE=$(PROFILE)) clean-all dist-gmenu
 	rm -fv $(OBJS) $(BIN)
-	$(MAKE) platform=trimui PROFILE=APPLY EXTRA_CFLAGS=-Wno-error=coverage-mismatch MINUI=1 dist-minui
+	$(MAKE) platform=trimui $(if $(PROFILE),PROFILE=$(PROFILE)) EXTRA_CFLAGS=-Wno-error=coverage-mismatch MINUI=1 dist-minui
 	cd pkg && zip -r ../picoarch.zip *
