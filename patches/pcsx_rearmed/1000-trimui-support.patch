@@ -65,6 +65,20 @@ index 52d690ff..16894380 100644
  # enable large file support if available
  ifeq ($(shell $(CC) -E -dD $(CFLAGS) include/arm_features.h | grep __SIZEOF_LONG__ | awk '{print $$3}'),4)
  CFLAGS += -D_FILE_OFFSET_BITS=64
+diff --git a/deps/libchdr/deps/lzma-24.05/src/CpuArch.c b/deps/libchdr/deps/lzma-24.05/src/CpuArch.c
+index ccc6f6ea..03d12977 100644
+--- a/deps/libchdr/deps/lzma-24.05/src/CpuArch.c
++++ b/deps/libchdr/deps/lzma-24.05/src/CpuArch.c
+@@ -794,7 +794,8 @@ BoolInt CPU_IsSupported_AES (void) { return APPLE_CRYPTO_SUPPORT_VAL; }
+ #ifdef Z7_GETAUXV_AVAILABLE
+ // #pragma message("=== Z7_GETAUXV_AVAILABLE === ")
+ #include <sys/auxv.h>
+-#define USE_HWCAP
++// this needs to be skipped for the ancient TrimUI Model S toolchain to build this dependency
++// #define USE_HWCAP
+ #endif
+ 
+ #ifdef USE_HWCAP
 diff --git a/frontend/libretro_core_options.h b/frontend/libretro_core_options.h
 index e049c6f4..799239e0 100644
 --- a/frontend/libretro_core_options.h
