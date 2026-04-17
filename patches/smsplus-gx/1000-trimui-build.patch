@@ -1,27 +1,42 @@
 diff --git a/Makefile.libretro b/Makefile.libretro
-index 5e52c65..db2761a 100644
+index a03bdd8..8d3d71c 100644
 --- a/Makefile.libretro
 +++ b/Makefile.libretro
-@@ -327,7 +327,21 @@ else ifeq ($(platform), miyoo)
+@@ -330,7 +330,22 @@ else ifeq ($(platform), miyoo)
     SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
     CFLAGS += -ffast-math -march=armv5te -mtune=arm926ej-s -fomit-frame-pointer
     ENDIANNESS_DEFINES += -DLSB_FIRST -DBYTE_ORDER=LITTLE_ENDIAN -DALIGN_DWORD
 -   
 +
++# TrimUI Model S
 +else ifeq ($(platform), trimui)
-+	TARGET := $(TARGET_NAME)_libretro.so
-+	CC = $(CROSS_COMPILE)gcc
-+	CXX = $(CROSS_COMPILE)g++
-+	AR = $(CROSS_COMPILE)ar
-+	SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
-+	CFLAGS += -fomit-frame-pointer -march=armv5te -mtune=arm926ej-s -ffast-math -fno-PIC -flto
-+	CXXFLAGS += -fomit-frame-pointer -march=armv5te -mtune=arm926ej-s -ffast-math -fno-PIC -flto
-+	LDFLAGS += -flto
-+	ifeq (,$(DEBUG))
-+		LDFLAGS += -s
-+	endif
-+	ENDIANNESS_DEFINES += -DLSB_FIRST -DBYTE_ORDER=LITTLE_ENDIAN -DALIGN_DWORD
++   TARGET := $(TARGET_NAME)_libretro.so
++   CC = $(CROSS_COMPILE)gcc
++   CXX = $(CROSS_COMPILE)g++
++   AR = $(CROSS_COMPILE)ar
++   SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
++   CFLAGS += -fomit-frame-pointer -march=armv5te -mtune=arm926ej-s -ffast-math -fno-PIC -flto
++   CXXFLAGS += -fomit-frame-pointer -march=armv5te -mtune=arm926ej-s -ffast-math -fno-PIC -flto
++   LDFLAGS += -flto
++   ifeq (,$(DEBUG))
++      LDFLAGS += -s
++   endif
++   ENDIANNESS_DEFINES += -DLSB_FIRST -DBYTE_ORDER=LITTLE_ENDIAN -DALIGN_DWORD
 +
  # else ifneq (,$(findstring armv,$(platform)))
  #    TARGET := $(TARGET_NAME)_libretro.so
  #    fpic := -fPIC
+@@ -550,6 +565,13 @@ else
+ 	LD = $(CC)
+ endif
+ 
++ifeq ($(PROFILE), GENERATE)
++	CFLAGS  += -fprofile-generate=./profile/$(TARGET_NAME)
++	LDFLAGS += -lgcov
++else ifeq ($(PROFILE), APPLY)
++	CFLAGS  += -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
++endif
++
+ $(TARGET): $(OBJECTS)
+ ifeq ($(STATIC_LINKING), 1)
+ 	$(AR) rcs $@ $(OBJECTS)
