@@ -1,8 +1,8 @@
 diff --git a/platform/libretro/libretro.c b/platform/libretro/libretro.c
-index 3c0f726..84aa5f1 100644
+index 7612396f..b4fc0d04 100644
 --- a/platform/libretro/libretro.c
 +++ b/platform/libretro/libretro.c
-@@ -137,13 +137,11 @@ char **g_argv;
+@@ -151,13 +151,11 @@ char **g_argv;
  static unsigned frameskip_type             = 0;
  static unsigned frameskip_threshold        = 0;
  static uint16_t frameskip_counter          = 0;
@@ -17,7 +17,7 @@ index 3c0f726..84aa5f1 100644
  
  static unsigned audio_latency              = 0;
  static bool update_audio_latency           = false;
-@@ -1982,7 +1980,7 @@ static void update_variables(bool first_run)
+@@ -2044,7 +2042,7 @@ static void update_variables(bool first_run)
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
        if (strcmp(var.value, "auto") == 0)
           frameskip_type = 1;
@@ -26,7 +26,7 @@ index 3c0f726..84aa5f1 100644
           frameskip_type = 2;
     }
  
-@@ -1991,6 +1989,11 @@ static void update_variables(bool first_run)
+@@ -2053,6 +2051,11 @@ static void update_variables(bool first_run)
     var.value           = NULL;
     if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
        frameskip_threshold = strtol(var.value, NULL, 10);
@@ -38,7 +38,7 @@ index 3c0f726..84aa5f1 100644
  
     old_vout_format = vout_format;
     var.value = NULL;
-@@ -2099,7 +2102,7 @@ void retro_run(void)
+@@ -2426,7 +2429,7 @@ void retro_run(void)
              break;
        }
  
@@ -47,7 +47,7 @@ index 3c0f726..84aa5f1 100644
           PicoIn.skipFrame  = 0;
           frameskip_counter = 0;
        } else
-@@ -2284,6 +2287,7 @@ void retro_init(void)
+@@ -2637,6 +2640,7 @@ void retro_init(void)
     frameskip_type             = 0;
     frameskip_threshold        = 0;
     frameskip_counter          = 0;
@@ -56,10 +56,10 @@ index 3c0f726..84aa5f1 100644
     retro_audio_buff_occupancy = 0;
     retro_audio_buff_underrun  = false;
 diff --git a/platform/libretro/libretro_core_options.h b/platform/libretro/libretro_core_options.h
-index 9cd2f85..d2ebede 100644
+index aa5e8598..9875db26 100644
 --- a/platform/libretro/libretro_core_options.h
 +++ b/platform/libretro/libretro_core_options.h
-@@ -340,13 +340,13 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+@@ -374,13 +374,13 @@ struct retro_core_option_v2_definition option_defs_us[] = {
        "picodrive_frameskip",
        "Frameskip",
        NULL,
@@ -77,7 +77,7 @@ index 9cd2f85..d2ebede 100644
           { NULL, NULL },
        },
        "disabled"
-@@ -355,7 +355,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+@@ -389,7 +389,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
        "picodrive_frameskip_threshold",
        "Frameskip Threshold (%)",
        NULL,
@@ -86,7 +86,7 @@ index 9cd2f85..d2ebede 100644
        NULL,
        "performance",
        {
-@@ -379,6 +379,28 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+@@ -413,6 +413,28 @@ struct retro_core_option_v2_definition option_defs_us[] = {
        },
        "33"
     },
