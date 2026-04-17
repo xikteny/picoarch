@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index a22eb5d..1f6278e 100644
+index a22eb5d..35d9512 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -383,6 +383,22 @@ else ifeq ($(platform), miyoo)
@@ -14,7 +14,7 @@ index a22eb5d..1f6278e 100644
 +	AR = $(CROSS_COMPILE)ar
 +	fpic := -fno-PIC
 +	SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
-+	FLAGS + $(PTHREAD_FLAGS) -DHAVE_MKDIR
++	FLAGS += $(PTHREAD_FLAGS) -DHAVE_MKDIR
 +	FLAGS += -fomit-frame-pointer -ffast-math -mcpu=arm926ej-s -mtune=arm926ej-s -flto
 +	LDFLAGS += $(PTHREAD_FLAGS) -lrt -flto
 +	OPTIMIZE := -Ofast -DNDEBUG
