@@ -1,0 +1,102 @@
+diff --git a/Makefile b/Makefile
+index 07f785e1..a4f4eb6b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -10,6 +10,8 @@ ASSERTS ?= 0
+ HAVE_CHD ?= 1
+ ifneq ($(DEBUG)$(DEBUG_SYMS), 00)
+ CFLAGS += -ggdb
++else ifneq (,$(OPTIMIZE))
++CFLAGS += $(OPTIMIZE)
+ endif
+ CFLAGS_OPT ?= -Ofast
+ ifneq ($(DEBUG), 1)
+diff --git a/Makefile.libretro b/Makefile.libretro
+index 52d690ff..f3809fab 100644
+--- a/Makefile.libretro
++++ b/Makefile.libretro
+@@ -106,6 +106,26 @@ else ifeq ($(platform), qnx)
+ else ifeq ($(platform), miyoo)
+   CC = /opt/miyoo/usr/bin/arm-linux-gcc
+   CXX = /opt/miyoo/usr/bin/arm-linux-g++
++else ifeq ($(platform), trimui)
++  TARGET := $(TARGET_NAME)_libretro.so
++  CC  = $(CROSS_COMPILE)gcc
++  CXX = $(CROSS_COMPILE)g++
++  AR  = $(CROSS_COMPILE)ar
++  LD  = $(CROSS_COMPILE)ld
++  CFLAGS  += -mcpu=arm926ej-s -mtune=arm926ej-s
++  CFLAGS  += -DGPULIB_USE_MMAP -DGPU_UNAI_USE_INT_DIV_MULTINV -D_TRIMUI
++  CFLAGS  += -ffast-math -fdata-sections -ffunction-sections -fsingle-precision-constant -flto -fno-PIC
++  LDFLAGS += -flto
++  ifeq (,$(DEBUG))
++    LDFLAGS += -s
++  endif
++  CPU_ARCH := arm
++  OPTIMIZE := -Ofast -DNDEBUG
++  DRC_CACHE_BASE = 0
++  BUILTIN_GPU    = unai
++  DYNAREC        = ari64
++  ARCH           = arm
++  HAVE_NEON      = 0
+ endif
+ CC_AS ?= $(CC)
+ 
+@@ -633,6 +653,13 @@ CFLAGS += $(fpic)
+ MAIN_LDFLAGS += -shared
+ MAIN_LDLIBS += $(LIBPTHREAD) $(LIBM) $(LIBDL) $(LIBZ)
+ 
++ifeq ($(PROFILE), GENERATE)
++	CFLAGS  += -fprofile-generate=./profile/pcsx_rearmed
++	LDFLAGS += -lgcov
++else ifeq ($(PROFILE), APPLY)
++	CFLAGS  += -fprofile-use -fprofile-dir=../profile/pcsx_rearmed -fbranch-probabilities
++endif
++
+ # enable large file support if available
+ ifeq ($(shell $(CC) -E -dD $(CFLAGS) include/arm_features.h | grep __SIZEOF_LONG__ | awk '{print $$3}'),4)
+ CFLAGS += -D_FILE_OFFSET_BITS=64
+diff --git a/frontend/libretro_core_options.h b/frontend/libretro_core_options.h
+index e049c6f4..799239e0 100644
+--- a/frontend/libretro_core_options.h
++++ b/frontend/libretro_core_options.h
+@@ -174,7 +174,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+ #ifdef HAVE_CDROM
+       "Affects both physical CD-ROM and CD images. "
+ #endif
+-#if !defined(_3DS) && !defined(VITA)
++#if !defined(_3DS) && !defined(VITA) && !defined(_TRIMUI)
+       "333000 will try to read the complete disk (requires an additional 750MB of RAM)."
+ #endif
+       ,
+@@ -184,7 +184,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+          V(0),  V(1),  V(2),  V(3),  V(4),  V(5),  V(6),  V(7),
+          V(8),  V(9),  V(10), V(11), V(12), V(13), V(14), V(15),
+          V(16), V(32), V(64), V(128), V(256), V(512), V(1024),
+-#if !defined(_3DS) && !defined(VITA)
++#if !defined(_3DS) && !defined(VITA) && !defined(_TRIMUI)
+ 	 V(333000),
+ #endif
+          { NULL, NULL},
+@@ -323,7 +323,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+          { "force",    "Force" },
+          { NULL, NULL },
+       },
+-#if defined(_3DS)
++#if defined(_3DS) || defined (_TRIMUI)
+       "disabled",
+ #else
+       "enabled",
+diff --git a/frontend/main.c b/frontend/main.c
+index e761b3eb..be2ae422 100644
+--- a/frontend/main.c
++++ b/frontend/main.c
+@@ -138,7 +138,7 @@ void emu_set_default_config(void)
+ 	spu_config.iTempo = 0;
+ 	// may cause issues, no effect if only 1 core is detected
+ 	spu_config.iUseThread = 0;
+-#if defined(HAVE_PRE_ARMV7) && !defined(_3DS) /* XXX GPH hack */
++#if defined(HAVE_PRE_ARMV7) && !defined(_3DS) && !defined(_TRIMUI) /* XXX GPH hack */
+ 	spu_config.iUseReverb = 0;
+ 	spu_config.iUseInterpolation = 0;
+ #ifndef HAVE_LIBRETRO
