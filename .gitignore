@@ -11,7 +11,9 @@ picoarch
 /system
 
 /bluemsx
+/chimerasnes
 /dosbox-pure
+/ecwolf
 /fake-08
 /fbalpha2012
 /fceumm
@@ -28,13 +30,14 @@ picoarch
 /pcsx_rearmed
 /picodrive
 /pokemini
+/prboom
 /quicknes
+/scummvm
 /smsplus-gx
 /snes9x2002
 /snes9x2005
 /snes9x2005_plus
 /snes9x2010
 /stella2014
-/prboom
 /tyrquake
 /vitaquake2

@@ -46,7 +46,7 @@ CFLAGS        += -DREVISION=\"$(GIT_REVISION)\"
 LDFLAGS        = -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -llz4 -lpthread -Wl,--gc-sections -flto
 
 # Single core for testing purposes
-CORES          = snes9x2002
+CORES          = pcsx_rearmed
 # The full set of core settings are below, commented by "## "
 ## CORES          = bluemsx fbalpha2012 fceumm fmsx gambatte gme gpsp mame2000 mame2003_plus mednafen_pce_fast picodrive quicknes smsplus-gx snes9x2002
 ## ifneq ($(platform), trimui)
@@ -54,7 +54,7 @@ CORES          = snes9x2002
 ## endif
 
 SOFILES        = $(foreach core,$(CORES),$(core)_libretro.so)
-include cores.mk
+include Makefile.cores
 
 .PHONY: print-%
 print-%:
@@ -99,7 +99,7 @@ define install_liblz4
 endef
 
 # Platform-specific SOURCES, CFLAGS, LDFLAGS, and dist targets
--include platform/$(platform).mk
+-include Makefile.$(platform)
 
 # Debug/Profile CFLAGS
 ifeq ($(DEBUG), 1)
