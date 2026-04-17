@@ -46,11 +46,11 @@ CFLAGS        += -DREVISION=\"$(GIT_REVISION)\"
 LDFLAGS        = -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -llz4 -lpthread -Wl,--gc-sections -flto
 
 # Single core for testing purposes
-CORES          = fake-08
+CORES          = mednafen_wswan
 # The full set of core settings are below, commented by "## "
-## CORES          = bluemsx fbalpha2012 fceumm fmsx gambatte gme gpsp mame2000 mame2003_plus mednafen_pce_fast pcsx_rearmed picodrive pokemini quicknes smsplus-gx snes9x2002
+## CORES          = bluemsx fake-08 fbalpha2012 fceumm fmsx gambatte gme gpsp mame2000 mame2003_plus mednafen_pce_fast pcsx_rearmed picodrive pokemini quicknes smsplus-gx snes9x2002
 ## ifneq ($(platform), trimui)
-## 	CORES      := $(CORES) chimerasnes dosbox-pure ecwolf fake-08 mednafen_lynx mednafen_ngp mednafen_wswan prboom scummvm snes9x2005 snes9x2005_plus snes9x2010 stella2014 tyrquake vitaquake2
+## 	CORES      := $(CORES) chimerasnes dosbox-pure ecwolf mednafen_lynx mednafen_ngp mednafen_wswan prboom scummvm snes9x2005 snes9x2005_plus snes9x2010 stella2014 tyrquake vitaquake2
 ## endif
 
 SOFILES        = $(foreach core,$(CORES),$(core)_libretro.so)
