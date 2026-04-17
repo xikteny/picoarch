@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index fa45fb3..9e20a41 100644
+index 25ea7bc..7d923ad 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -39,6 +39,7 @@ ifeq ($(platform), unix)
@@ -10,10 +10,11 @@ index fa45fb3..9e20a41 100644
  
  # OS X
  else ifeq ($(platform), osx)
-@@ -214,6 +215,19 @@ else ifeq ($(platform), switch)
-         include $(LIBTRANSISTOR_HOME)/libtransistor.mk
-         STATIC_LINKING=1
+@@ -308,6 +309,21 @@ else ifeq ($(platform), miyoo)
+ 	CFLAGS += -O2 -mcpu=arm926ej-s
+ 	CXXFLAGS += -O2 -mcpu=arm926ej-s
  
++# TrimUI Model S
 +else ifeq ($(platform), trimui)
 +	TARGET := $(TARGET_NAME)_libretro.so
 +	CC = $(CROSS_COMPILE)gcc
@@ -23,10 +24,29 @@ index fa45fb3..9e20a41 100644
 +	CFLAGS += -fomit-frame-pointer -march=armv5te -mtune=arm926ej-s -ffast-math -fno-PIC -flto -D_GNU_SOURCE
 +	CXXFLAGS += -fomit-frame-pointer -march=armv5te -mtune=arm926ej-s -ffast-math -fno-PIC -flto -D_GNU_SOURCE
 +	LDFLAGS += -flto
++	OPTIMIZE := -Ofast -DNDEBUG
 +	ifeq (,$(DEBUG))
 +		LDFLAGS += -s
 +	endif
 +
- # ARM
- else ifneq (,$(findstring armv,$(platform)))
- 	TARGET := $(TARGET_NAME)_libretro.so
+ else ifeq ($(platform), emscripten)
+ 	TARGET := $(TARGET_NAME)_libretro_$(platform).bc
+ 	STATIC_LINKING = 1
+@@ -554,6 +570,17 @@ CXXFLAGS += -Wall $(INCFLAGS) $(INCFLAGS_PLATFORM)
+ 
+ ifeq ($(DEBUG),1)
+ CFLAGS += -O0 -g
++else ifneq (,$(OPTIMIZE))
++CFLAGS += $(OPTIMIZE)
++else
++CFLAGS += -O2 -DNDEBUG
++endif
++
++ifeq ($(PROFILE), GENERATE)
++CFLAGS  += -fprofile-generate=./profile/$(TARGET_NAME)
++LDFLAGS += -lgcov
++else ifeq ($(PROFILE), APPLY)
++CFLAGS  += -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
+ endif
+ 
+ ifneq (,$(findstring msvc,$(platform)))
