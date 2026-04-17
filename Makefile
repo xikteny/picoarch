@@ -63,6 +63,26 @@ print-%:
 .PHONY: all
 all: $(BIN) cores
 
+define CORE_template =
+    $1_REPO ?= https://github.com/libretro/$(1)/
+    $1_BUILD_PATH ?= $(1)
+    $1_LICENSE ?= LICENSE
+    $1_MAKE = make $(and $($1_MAKEFILE),-f $($1_MAKEFILE)) platform=$(core_platform) $(and $(DEBUG),DEBUG=$(DEBUG)) $(and $(PROFILE),PROFILE=$(PROFILE)) CC=$(CC) CXX=$(CXX) AR=$(AR) $($(1)_FLAGS)
+$(1):
+	git clone $(if $($1_REVISION),,--depth 1) --recursive $$($(1)_REPO) $(1)
+	$(if $1_REVISION,cd $(1) && git checkout $($1_REVISION),)
+	(test ! -d patches/$(1)) || (cd $(1) && $(foreach patch, $(sort $(wildcard patches/$(1)/*.patch)), patch --merge --no-backup-if-mismatch -p1 < ../$(patch) &&) true)
+$(1)/$(1)_libretro.so: $(1)
+	cd $$($1_BUILD_PATH) && $$($1_MAKE) $(PROCS)
+$(1)_libretro.so: $(1)/$(1)_libretro.so
+	cp -v $$($1_BUILD_PATH)/$(if $($(1)_CORE),$($(1)_CORE),$(1)_libretro.so) $(1)_libretro.so
+clean-$(1):
+	test ! -d $(1) || (cd $$($1_BUILD_PATH) && $$($1_MAKE) clean)
+	rm -fv $(1)_libretro.so
+endef
+
+$(foreach core,$(CORES),$(eval $(call CORE_template,$(core))))
+
 # install_licenses: $(1)=destination dir, $(2)=core name(s) (optional)
 define install_licenses
 	mkdir -pv "$(1)/LICENSES"
@@ -134,26 +154,6 @@ OBJS = $(SOURCES:.c=.o)
 
 $(BIN): libpicofe/.patched $(OBJS)
 	$(CC) $(OBJS) $(LDFLAGS) -o $(BIN)
-
-define CORE_template =
-    $1_REPO ?= https://github.com/libretro/$(1)/
-    $1_BUILD_PATH ?= $(1)
-    $1_LICENSE ?= LICENSE
-    $1_MAKE = make $(and $($1_MAKEFILE),-f $($1_MAKEFILE)) platform=$(core_platform) $(and $(DEBUG),DEBUG=$(DEBUG)) $(and $(PROFILE),PROFILE=$(PROFILE)) CC=$(CC) CXX=$(CXX) AR=$(AR) $($(1)_FLAGS)
-$(1):
-	git clone $(if $($1_REVISION),,--depth 1) --recursive $$($(1)_REPO) $(1)
-	$(if $1_REVISION,cd $(1) && git checkout $($1_REVISION),)
-	(test ! -d patches/$(1)) || (cd $(1) && $(foreach patch, $(sort $(wildcard patches/$(1)/*.patch)), patch --merge --no-backup-if-mismatch -p1 < ../$(patch) &&) true)
-$(1)/$(1)_libretro.so: $(1)
-	cd $$($1_BUILD_PATH) && $$($1_MAKE) $(PROCS)
-$(1)_libretro.so: $(1)/$(1)_libretro.so
-	cp -v $$($1_BUILD_PATH)/$(if $($(1)_CORE),$($(1)_CORE),$(1)_libretro.so) $(1)_libretro.so
-clean-$(1):
-	test ! -d $(1) || (cd $$($1_BUILD_PATH) && $$($1_MAKE) clean)
-	rm -fv $(1)_libretro.so
-endef
-
-$(foreach core,$(CORES),$(eval $(call CORE_template,$(core))))
 
 .PHONY: cores
 cores: $(SOFILES)

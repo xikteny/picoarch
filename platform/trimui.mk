@@ -184,7 +184,7 @@ dist-minui-picoarch: $(BIN) cores
 	cp -v $(BIN) $(SOFILES) pkg/MinUI/Games/picoarch.pak
 	$(call install_licenses,pkg/MinUI/Games/picoarch.pak)
 	$(call install_liblz4,pkg/MinUI/Games/picoarch.pak)
-	find pkg/MinUI/Emus -name "*_libretro.txt" -exec cp {} pkg/MinUI/Games/picoarch.pak/LICENSES/ \;
+	find pkg/MinUI/Emus -name "*_libretro.txt" -exec cp -v {} pkg/MinUI/Games/picoarch.pak/LICENSES/ \;
 
 $(foreach core, $(CORES),$(eval $(call CORE_pak_template,$(core))))
 
