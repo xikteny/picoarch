@@ -1,0 +1,51 @@
+diff --git a/Makefile b/Makefile
+index 9a8dd07..84d4fbf 100644
+--- a/Makefile
++++ b/Makefile
+@@ -352,6 +352,23 @@ else ifeq ($(platform), gcw0)
+    SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
+    FLAGS += -ffast-math -march=mips32 -mtune=mips32r2 -mhard-float
+ 
++# TrimUI Model S
++else ifeq ($(platform), trimui)
++   TARGET     := $(TARGET_NAME)_libretro.so
++   CC          = $(CROSS_COMPILE)gcc
++   CXX         = $(CROSS_COMPILE)g++
++   AR          = $(CROSS_COMPILE)ar
++   fpic       := -fno-PIC
++   SHARED     := -shared -Wl,--no-undefined -Wl,--version-script=link.T
++   FLAGS      += -fomit-frame-pointer -ffast-math -mcpu=arm926ej-s -mtune=arm926ej-s -flto
++   LDFLAGS    += -flto
++   CXXFLAGS   += -std=c++11
++   CFLAGS     += -std=gnu11
++   OPTIMIZE   := -Ofast -DNDEBUG
++   ifeq (,$(DEBUG))
++      LDFLAGS += -s
++   endif
++
+ # Windows MSVC 2010 x64
+ else ifeq ($(platform), windows_msvc2010_x64)
+    CC  = cl.exe
+@@ -595,9 +612,20 @@ OBJECTS := $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
+ all: $(TARGET)
+ 
+ ifeq ($(DEBUG),0)
+-   FLAGS += -O2 -DNDEBUG $(EXTRA_GCC_FLAGS)
++   ifneq (,$(OPTIMIZE))
++      FLAGS += $(OPTIMIZE)
++   else
++      FLAGS += -O2 -DNDEBUG $(EXTRA_GCC_FLAGS)
++   endif
+ else
+-   FLAGS += -O0 -g
++   FLAGS    += -O0 -g
++endif
++
++ifeq ($(PROFILE), GENERATE)
++   FLAGS    += -fprofile-generate=./profile/$(TARGET_NAME)
++   LDFLAGS  += -lgcov
++else ifeq ($(PROFILE), APPLY)
++   FLAGS    += -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
+ endif
+ 
+ LDFLAGS += $(fpic) $(SHARED)
