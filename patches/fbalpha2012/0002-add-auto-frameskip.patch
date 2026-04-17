@@ -1,5 +1,5 @@
 diff --git a/svn-current/trunk/src/burner/libretro/libretro.cpp b/svn-current/trunk/src/burner/libretro/libretro.cpp
-index 639aab9..1b23498 100644
+index 639aab9d..27774c4f 100644
 --- a/svn-current/trunk/src/burner/libretro/libretro.cpp
 +++ b/svn-current/trunk/src/burner/libretro/libretro.cpp
 @@ -153,6 +153,72 @@ void retro_set_environment(retro_environment_t cb)
@@ -21,72 +21,74 @@ index 639aab9..1b23498 100644
 +static bool update_audio_latency           = false;
 +
 +static void retro_audio_buff_status_cb(
-+      bool active, unsigned occupancy, bool underrun_likely)
++		bool active, unsigned occupancy, bool underrun_likely)
 +{
-+   retro_audio_buff_active    = active;
-+   retro_audio_buff_occupancy = occupancy;
-+   retro_audio_buff_underrun  = underrun_likely;
++	retro_audio_buff_active    = active;
++	retro_audio_buff_occupancy = occupancy;
++	retro_audio_buff_underrun  = underrun_likely;
 +}
 +
 +void init_frameskip(void)
 +{
-+   if (frameskip_type > 0)
-+   {
-+      struct retro_audio_buffer_status_callback buf_status_cb;
++	if (frameskip_type > 0)
++	{
++		struct retro_audio_buffer_status_callback buf_status_cb;
 +
-+      buf_status_cb.callback = retro_audio_buff_status_cb;
-+      if (!environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK,
-+            &buf_status_cb))
-+      {
-+         if (log_cb)
-+            log_cb(RETRO_LOG_WARN, "Frameskip disabled - frontend does not support audio buffer status monitoring.\n");
++		buf_status_cb.callback = retro_audio_buff_status_cb;
++		if (!environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK,
++					&buf_status_cb))
++		{
++			if (log_cb)
++				log_cb(RETRO_LOG_WARN, "Frameskip disabled - frontend does not support audio buffer status monitoring.\n");
 +
-+         retro_audio_buff_active    = false;
-+         retro_audio_buff_occupancy = 0;
-+         retro_audio_buff_underrun  = false;
-+         audio_latency              = 0;
-+      }
-+      else
-+      {
-+         /* Frameskip is enabled - increase frontend
-+          * audio latency to minimise potential
-+          * buffer underruns */
++			retro_audio_buff_active    = false;
++			retro_audio_buff_occupancy = 0;
++			retro_audio_buff_underrun  = false;
++			audio_latency              = 0;
++		}
++		else
++		{
++			/* Frameskip is enabled - increase frontend
++			 * audio latency to minimise potential
++			 * buffer underruns */
 +#ifdef FBACORES_CPS
-+         float frame_time_msec = 1000.0f / 59.629403f;
++			float frame_time_msec = 1000.0f / 59.629403f;
 +#else
-+         float frame_time_msec = 1000.0f / ((float)nBurnFPS / 100.0f);
++			float frame_time_msec = 1000.0f / ((float)nBurnFPS / 100.0f);
 +#endif
-+         /* Set latency to 6x current frame time... */
-+         audio_latency = (unsigned)((6.0f * frame_time_msec) + 0.5f);
++			/* Set latency to 6x current frame time... */
++			audio_latency = (unsigned)((6.0f * frame_time_msec) + 0.5f);
 +
-+         /* ...then round up to nearest multiple of 32 */
-+         audio_latency = (audio_latency + 0x1F) & ~0x1F;
-+      }
-+   }
-+   else
-+   {
-+      environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, NULL);
-+      audio_latency = 0;
-+   }
++			/* ...then round up to nearest multiple of 32 */
++			audio_latency = (audio_latency + 0x1F) & ~0x1F;
++		}
++	}
++	else
++	{
++		environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, NULL);
++		audio_latency = 0;
++	}
 +
-+   update_audio_latency = true;
++	update_audio_latency = true;
 +}
 +
  char g_rom_dir[MAX_PATH];
  char g_save_dir[1024];
  char g_system_dir[1024];
-@@ -789,6 +855,14 @@ void retro_init()
+@@ -788,7 +854,15 @@ void retro_init()
+    else
        log_cb = log_dummy;
  
-    BurnLibInit();
-+   frameskip_type             = 0;
-+   frameskip_threshold        = 0;
-+   frameskip_counter          = 0;
-+   retro_audio_buff_active    = false;
-+   retro_audio_buff_occupancy = 0;
-+   retro_audio_buff_underrun  = false;
-+   audio_latency              = 0;
-+   update_audio_latency       = false;
+-   BurnLibInit();
++	BurnLibInit();
++	frameskip_type             = 0;
++	frameskip_threshold        = 0;
++	frameskip_counter          = 0;
++	retro_audio_buff_active    = false;
++	retro_audio_buff_occupancy = 0;
++	retro_audio_buff_underrun  = false;
++	audio_latency              = 0;
++	update_audio_latency       = false;
  }
  
  void retro_deinit()
@@ -94,49 +96,49 @@ index 639aab9..1b23498 100644
  {
     int width, height;
     BurnDrvGetVisibleSize(&width, &height);
-+   int nSkipFrame = 0;
++	int nSkipFrame = 0;
 +
     pBurnDraw = (uint8_t*)g_fba_frame;
  
     InputMake();
  
-+   /* Check whether current frame should
-+    * be skipped */
-+   if ((frameskip_type > 0) && retro_audio_buff_active)
-+   {
-+      switch (frameskip_type)
-+      {
-+         case 1: /* auto */
-+            nSkipFrame = retro_audio_buff_underrun ? 1 : 0;
-+            break;
-+         case 2: /* manual */
-+            nSkipFrame = (retro_audio_buff_occupancy < frameskip_threshold) ? 1 : 0;
-+            break;
-+         default:
-+            nSkipFrame = 0;
-+            break;
-+      }
++	/* Check whether current frame should
++	 * be skipped */
++	if ((frameskip_type > 0) && retro_audio_buff_active)
++	{
++		switch (frameskip_type)
++		{
++			case 1: /* auto */
++				nSkipFrame = retro_audio_buff_underrun ? 1 : 0;
++				break;
++			case 2: /* manual */
++				nSkipFrame = (retro_audio_buff_occupancy < frameskip_threshold) ? 1 : 0;
++				break;
++			default:
++				nSkipFrame = 0;
++				break;
++		}
 +
-+      if (!nSkipFrame || (frameskip_counter >= frameskip_interval))
-+      {
-+         nSkipFrame        = 0;
-+         frameskip_counter = 0;
-+      }
-+      else
-+         frameskip_counter++;
-+   }
++		if (!nSkipFrame || (frameskip_counter >= frameskip_interval))
++		{
++			nSkipFrame        = 0;
++			frameskip_counter = 0;
++		}
++		else
++			frameskip_counter++;
++	}
 +
-+   if (nSkipFrame)
-+      pBurnDraw = NULL;
++	if (nSkipFrame)
++		pBurnDraw = NULL;
 +
-+   /* If frameskip settings have changed, update
-+    * frontend audio latency */
-+   if (update_audio_latency)
-+   {
-+      environ_cb(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY,
-+            &audio_latency);
-+      update_audio_latency = false;
-+   }
++	/* If frameskip settings have changed, update
++	 * frontend audio latency */
++	if (update_audio_latency)
++	{
++		environ_cb(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY,
++				&audio_latency);
++		update_audio_latency = false;
++	}
 +
     ForceFrameStep();
  
@@ -146,10 +148,10 @@ index 639aab9..1b23498 100644
     }
  
 -   video_cb(g_fba_frame, width, height, nBurnPitch);
-+   if (!nSkipFrame)
-+      video_cb(g_fba_frame, width, height, nBurnPitch);
-+   else
-+      video_cb(NULL, width, height, nBurnPitch);
++	if (!nSkipFrame)
++		video_cb(g_fba_frame, width, height, nBurnPitch);
++	else
++		video_cb(NULL, width, height, nBurnPitch);
 +
     audio_batch_cb(g_audio_buf, nBurnSoundLen);
  
@@ -159,7 +161,7 @@ index 639aab9..1b23498 100644
        bool old_bVerticalMode = bVerticalMode;
  
 -      check_variables();
-+      check_variables(false);
++		check_variables(false);
  
        apply_dipswitch_from_variables();
  
@@ -168,15 +170,15 @@ index 639aab9..1b23498 100644
  
        set_environment();
 -      check_variables();
-+      check_variables(true);
++		check_variables(true);
  
        pBurnSoundOut = g_audio_buf;
        nBurnSoundRate = AUDIO_SAMPLERATE;
 diff --git a/svn-current/trunk/src/burner/libretro/retro_common.cpp b/svn-current/trunk/src/burner/libretro/retro_common.cpp
-index 6b8bf31..95c994a 100644
+index c3af4cf7..e5c59b0b 100644
 --- a/svn-current/trunk/src/burner/libretro/retro_common.cpp
 +++ b/svn-current/trunk/src/burner/libretro/retro_common.cpp
-@@ -62,6 +62,11 @@ INT32 g_audio_samplerate = 48000;
+@@ -57,6 +57,11 @@ INT32 g_audio_samplerate = 48000;
  UINT8 *diag_input;
  neo_geo_modes g_opt_neo_geo_mode = NEO_GEO_MODE_MVS;
  
@@ -188,7 +190,7 @@ index 6b8bf31..95c994a 100644
  #ifdef USE_CYCLONE
  // 0 - c68k, 1 - m68k
  // we don't use cyclone by default because it breaks savestates cross-platform compatibility (including netplay)
-@@ -78,9 +83,11 @@ static UINT8 diag_input_select_l_r[] =  {RETRO_DEVICE_ID_JOYPAD_SELECT, RETRO_DE
+@@ -73,9 +78,11 @@ static UINT8 diag_input_select_l_r[] =  {RETRO_DEVICE_ID_JOYPAD_SELECT, RETRO_DE
  
  // Global core options
  static const struct retro_variable var_empty = { NULL, NULL };
@@ -201,7 +203,7 @@ index 6b8bf31..95c994a 100644
  static const struct retro_variable var_fbneo_cpu_speed_adjust = { "fbneo-cpu-speed-adjust", "CPU overclock; 100|110|120|130|140|150|160|170|180|190|200" };
  static const struct retro_variable var_fbneo_diagnostic_input = { "fbneo-diagnostic-input", "Diagnostic Input; None|Hold Start|Start + A + B|Hold Start + A + B|Start + L + R|Hold Start + L + R|Hold Select|Select + A + B|Hold Select + A + B|Select + L + R|Hold Select + L + R" };
  static const struct retro_variable var_fbneo_hiscores = { "fbneo-hiscores", "Hiscores; enabled|disabled" };
-@@ -227,9 +234,11 @@ void set_environment()
+@@ -222,9 +229,11 @@ void set_environment()
  #endif
  
  	// Add the Global core options
@@ -214,7 +216,7 @@ index 6b8bf31..95c994a 100644
  	vars_systems.push_back(&var_fbneo_cpu_speed_adjust);
  	vars_systems.push_back(&var_fbneo_hiscores);
  	if (nGameType != RETRO_GAME_TYPE_NEOCD)
-@@ -304,9 +313,40 @@ void set_environment()
+@@ -299,9 +308,40 @@ void set_environment()
  #endif
  }
  
@@ -256,20 +258,20 @@ index 6b8bf31..95c994a 100644
  
  	var.key = var_fbneo_cpu_speed_adjust.key;
  	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
-@@ -542,6 +582,11 @@ void check_variables(void)
+@@ -537,6 +577,11 @@ void check_variables(void)
  			bCycloneEnabled = false;
  	}
  #endif
 +
 +	/* Reinitialise frameskipping, if required */
 +	if (!first_run &&
-+	    ((frameskip_type     != prev_frameskip_type)))
++			((frameskip_type     != prev_frameskip_type)))
 +		init_frameskip();
  }
  
  #ifdef USE_CYCLONE
 diff --git a/svn-current/trunk/src/burner/libretro/retro_common.h b/svn-current/trunk/src/burner/libretro/retro_common.h
-index 3efc786..f4feae6 100644
+index 3efc7864..f4feae6d 100644
 --- a/svn-current/trunk/src/burner/libretro/retro_common.h
 +++ b/svn-current/trunk/src/burner/libretro/retro_common.h
 @@ -78,7 +78,8 @@ char* str_char_replace(char* destination, char c_find, char c_replace);
@@ -283,7 +285,7 @@ index 3efc786..f4feae6 100644
  void SetSekCpuCore();
  #endif
 diff --git a/svn-current/trunk/src/burner/libretro/retro_input.cpp b/svn-current/trunk/src/burner/libretro/retro_input.cpp
-index d6b1980..2bf2e8d 100644
+index d6b1980e..2bf2e8d0 100644
 --- a/svn-current/trunk/src/burner/libretro/retro_input.cpp
 +++ b/svn-current/trunk/src/burner/libretro/retro_input.cpp
 @@ -2293,7 +2293,7 @@ void InputInit()
