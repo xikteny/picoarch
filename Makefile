@@ -46,9 +46,9 @@ CFLAGS        += -DREVISION=\"$(GIT_REVISION)\"
 LDFLAGS        = -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -llz4 -lpthread -Wl,--gc-sections -flto
 
 # Single core for testing purposes
-CORES          = pcsx_rearmed
+CORES          = pokemini
 # The full set of core settings are below, commented by "## "
-## CORES          = bluemsx fbalpha2012 fceumm fmsx gambatte gme gpsp mame2000 mame2003_plus mednafen_pce_fast picodrive quicknes smsplus-gx snes9x2002
+## CORES          = bluemsx fbalpha2012 fceumm fmsx gambatte gme gpsp mame2000 mame2003_plus mednafen_pce_fast pcsx_rearmed picodrive quicknes smsplus-gx snes9x2002
 ## ifneq ($(platform), trimui)
 ## 	CORES      := $(CORES) chimerasnes dosbox-pure ecwolf fake-08 mednafen_lynx mednafen_ngp mednafen_wswan pcsx_rearmed pokemini prboom scummvm snes9x2005 snes9x2005_plus snes9x2010 stella2014 tyrquake vitaquake2
 ## endif
