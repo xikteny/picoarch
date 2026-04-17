@@ -1,0 +1,50 @@
+diff --git a/platform/libretro/Makefile b/platform/libretro/Makefile
+index 1033395..bcdc4f2 100644
+--- a/platform/libretro/Makefile
++++ b/platform/libretro/Makefile
+@@ -123,7 +123,22 @@ else ifeq ($(platform), miyoomini)
+    CXXFLAGS += -marm -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7ve -D_NEED_FULL_PATH_
+    fpic := -fPIC
+    SHARED := -shared -Wl,--version-script=link.T
+-
++# TrimUI Model S
++else ifeq ($(platform), trimui)
++   TARGET := $(TARGET_NAME)_libretro.so
++   CC = $(CROSS_COMPILE)gcc
++   CXX = $(CROSS_COMPILE)g++
++   AR = $(CROSS_COMPILE)ar
++   STRIP = $(CROSS_COMPILE)strip
++   SHARED := -shared -Wl,--version-script=link.T
++   fpic := -fno-PIC
++   CFLAGS += -fomit-frame-pointer -march=armv5te -mtune=arm926ej-s -ffast-math -flto -D_GNU_SOURCE
++   CXXFLAGS += -fomit-frame-pointer -march=armv5te -mtune=arm926ej-s -ffast-math -flto -D_GNU_SOURCE
++   LDFLAGS += -flto
++   OPTIMIZE := -Ofast -DNDEBUG
++   ifeq (,$(DEBUG))
++      LDFLAGS += -s
++   endif
+ else ifeq ($(platform), gcw0)
+    TARGET := $(TARGET_NAME)_libretro_gcw0.so
+    CC = /opt/gcw0-toolchain/usr/bin/mipsel-linux-gcc
+@@ -157,11 +172,21 @@ LDFLAGS += $(LIBM)
+ ifeq ($(DEBUG), 1)
+    CFLAGS += -O0 -g -DDEBUG
+    CXXFLAGS += -O0 -g -DDEBUG
++else ifneq (,$(OPTIMIZE))
++   CFLAGS += $(OPTIMIZE)
++   CXXFLAGS += $(OPTIMIZE)
+ else
+    CFLAGS += -O2
+    CXXFLAGS += -O2
+ endif
+ 
++ifeq ($(PROFILE), GENERATE)
++   CFLAGS  += -fprofile-generate=./profile/$(TARGET_NAME)
++   LDFLAGS += -lgcov
++else ifeq ($(PROFILE), APPLY)
++   CFLAGS  += -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
++endif
++
+ include Makefile.common
+ 
+ CC = $(CXX)

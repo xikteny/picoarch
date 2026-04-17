@@ -1,0 +1,296 @@
+diff --git a/source/Audio.cpp b/source/Audio.cpp
+index c81829c..3976e6b 100644
+--- a/source/Audio.cpp
++++ b/source/Audio.cpp
+@@ -238,7 +238,7 @@ void Audio::api_music(int pattern, int16_t fade_len, int16_t mask){
+ }
+ 
+ void Audio::set_music_pattern(int pattern) {
+-    using std::max, std::min;
++    using std::max; using std::min;
+ 
+     // stop all previously playing music sounds
+     for (int n = 0; n < 4; ++n)
+@@ -351,8 +351,7 @@ void Audio::launch_sfx(int16_t sfx, int16_t chan, float offset, float length, bo
+ 
+ static float key_to_freq(float key)
+ {
+-    using std::exp2;
+-    return 440.f * exp2((key - 33.f) / 12.f);
++    return 440.f * std::pow(2.0f, (key - 33.f) / 12.f);
+ }
+ 
+ int16_t Audio::getCurrentSfxId(int channel){
+@@ -381,7 +380,7 @@ void Audio::update_sfx_state(sfx_state& cur_sfx, z8::synth_param& new_synth,
+                               float freq_factor, float length, bool is_music, 
+                               bool can_loop, bool half_rate, double inv_frames_per_second)
+ {
+-    using std::fabs, std::fmod, std::floor, std::max;
++    using std::fabs; using std::fmod; using std::floor; using std::max;
+ 
+     if (cur_sfx.sfx == -1) return;
+ 
+@@ -572,7 +571,7 @@ float Audio::get_synth_sample(z8::synth_param& params)
+         volume *= _audioState._musicChannel.volume_sfx;
+     }
+ 
+-    return std::clamp(waveform * volume, -1.0f, 1.0f);
++    return clamp(waveform * volume, -1.0f, 1.0f);
+ }
+ 
+ void Audio::FillAudioBuffer(void *audioBuffer, size_t offset, size_t size){
+@@ -774,7 +773,7 @@ void Audio::FillAudioBuffer(void *audioBuffer, size_t offset, size_t size){
+             float value_damp2 = channel_state.damp2.run(value);
+             if (chan_damp2_value > 0.0f) value = lerp(value, value_damp2, chan_damp2_value);
+ 
+-            int16_t chan_sample = (int16_t)(32767.99f * std::clamp(value, -0.99f, 0.99f));
++            int16_t chan_sample = (int16_t)(32767.99f * clamp(value, -0.99f, 0.99f));
+ 
+             // Apply hardware distort
+             if (_memory->hwState.distort & (1 << chan))
+@@ -788,7 +787,7 @@ void Audio::FillAudioBuffer(void *audioBuffer, size_t offset, size_t size){
+             channel_mix += chan_sample;
+         }
+ 
+-        sample = (int32_t)std::clamp(channel_mix, -32767.9f, 32767.9f);
++        sample = (int32_t)clamp(channel_mix, -32767.9f, 32767.9f);
+ 
+         //buffer is stereo, so just send the mono sample to both channels
+         buffer[i] = ((uint32_t)(uint16_t)sample << 16) | ((uint16_t)sample);
+@@ -986,7 +985,7 @@ void Audio::FillMonoAudioBuffer(void *audioBuffer, size_t offset, size_t size){
+             float value_damp2 = channel_state.damp2.run(value);
+             if (chan_damp2_value > 0.0f) value = lerp(value, value_damp2, chan_damp2_value);
+ 
+-            int16_t chan_sample = (int16_t)(32767.99f * std::clamp(value, -0.99f, 0.99f));
++            int16_t chan_sample = (int16_t)(32767.99f * clamp(value, -0.99f, 0.99f));
+ 
+             if (_memory->hwState.distort & (1 << chan))
+             {
+@@ -999,6 +998,6 @@ void Audio::FillMonoAudioBuffer(void *audioBuffer, size_t offset, size_t size){
+             channel_mix += chan_sample;
+         }
+ 
+-        buffer[i] = (int16_t)std::clamp(channel_mix, -32767.9f, 32767.9f);
++        buffer[i] = (int16_t)clamp(channel_mix, -32767.9f, 32767.9f);
+     }
+ }
+diff --git a/source/emojiconversion.cpp b/source/emojiconversion.cpp
+index 759a568..b706685 100644
+--- a/source/emojiconversion.cpp
++++ b/source/emojiconversion.cpp
+@@ -18,28 +18,55 @@
+ 
+ 
+ #include <cstdint>
+-#include <locale>
+ #include <string>
+-#include <codecvt>
+ #include <cstring>
+ #include <regex>
+-#include <string_view>
+ #include <map>
+ 
+ #include "emojiconversion.h"
+ 
+ 
+-std::string_view charset::to_utf8[256];
+-std::u32string_view charset::to_utf32[256];
++std::string charset::to_utf8[256];
++std::u32string charset::to_utf32[256];
+ 
+ static uint8_t multibyte_start[256];
+ static std::map<std::string, uint8_t> to_pico8;
+ std::regex charset::utf8_regex = charset::static_init();
+ 
+-std::regex charset::static_init()
++// Manual UTF-8 to UTF-32 conversion (replaces std::codecvt_utf8)
++static std::u32string manual_utf8_to_utf32(const char* begin, const char* end)
+ {
+-    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cvt;
++	std::u32string result;
++	const unsigned char* p = (const unsigned char*)begin;
++	const unsigned char* e = (const unsigned char*)end;
++	while (p < e)
++	{
++		char32_t cp;
++		if (*p < 0x80) {
++			cp = *p++;
++		} else if ((*p & 0xE0) == 0xC0) {
++			cp = (*p++ & 0x1F) << 6;
++			if (p < e) cp |= (*p++ & 0x3F);
++		} else if ((*p & 0xF0) == 0xE0) {
++			cp = (*p++ & 0x0F) << 12;
++			if (p < e) cp |= (*p++ & 0x3F) << 6;
++			if (p < e) cp |= (*p++ & 0x3F);
++		} else if ((*p & 0xF8) == 0xF0) {
++			cp = (*p++ & 0x07) << 18;
++			if (p < e) cp |= (*p++ & 0x3F) << 12;
++			if (p < e) cp |= (*p++ & 0x3F) << 6;
++			if (p < e) cp |= (*p++ & 0x3F);
++		} else {
++			++p; // skip invalid byte
++			continue;
++		}
++		result += cp;
++	}
++	return result;
++}
+ 
++std::regex charset::static_init()
++{
+     // The complete PICO-8 charmap, from 0 to 255. We cannot just store
+     // codepoints because some emoji glyphs are combinations of several
+     // codepoints, e.g. ⬇️ is U+2B07 (down arrow) + U+FE0F (variation
+@@ -52,7 +79,7 @@ std::regex charset::static_init()
+         "きくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよ"
+         "らりるれろわをんっゃゅょアイウエオカキクケコサシスセソタチツテト"
+         "ナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンッャュョ◜◝";
+-    static auto utf32_chars = cvt.from_bytes(utf8_chars, &utf8_chars[sizeof(utf8_chars)]);
++    static auto utf32_chars = manual_utf8_to_utf32(utf8_chars, &utf8_chars[sizeof(utf8_chars)]);
+ 
+     // Create all sorts of lookup tables for PICO-8 character conversions
+     char const *p8 = utf8_chars;
+@@ -62,8 +89,8 @@ std::regex charset::static_init()
+     {
+         size_t len32 = p32[1] == 0xfe0f ? 2 : 1;
+         size_t len8 = ((0xe5000000 >> ((*p8 >> 3) & 0x1e)) & 3) + len32 * len32;
+-        to_utf8[i] = std::string_view(p8, len8);
+-        to_utf32[i] = std::u32string_view(p32, len32);
++        to_utf8[i] = std::string(p8, len8);
++        to_utf32[i] = std::u32string(p32, len32);
+         to_pico8[std::string(p8, len8)] = i;
+ 
+         // Build a regex that lets us do faster (maybe?) UTF-8 conversions
+diff --git a/source/emojiconversion.h b/source/emojiconversion.h
+index 4ad3049..3c846bf 100644
+--- a/source/emojiconversion.h
++++ b/source/emojiconversion.h
+@@ -8,15 +8,15 @@ struct charset
+     static std::string pico8_to_utf8(std::string const &str);
+ 
+     // Map 8-bit PICO-8 characters to UTF-32 codepoints
+-    static std::u32string_view to_utf32[256];
++    static std::u32string to_utf32[256];
+ 
+     // Map 8-bit PICO-8 characters to UTF-8 string views
+-    static std::string_view to_utf8[256];
+-	
+-	// Map uppercase letters to PICO-8 glyphs
++    static std::string to_utf8[256];
++
++    // Map uppercase letters to PICO-8 glyphs
+     static std::string upper_to_emoji(std::string str);
+ 
+ private:
+     static std::regex static_init();
+     static std::regex utf8_regex;
+-};
+\ No newline at end of file
++};
+diff --git a/source/hostCommonFunctions.cpp b/source/hostCommonFunctions.cpp
+index 96b255f..1180c8d 100644
+--- a/source/hostCommonFunctions.cpp
++++ b/source/hostCommonFunctions.cpp
+@@ -14,10 +14,18 @@
+ #include "cartzip.h"
+ #endif
+ 
++#include <sstream>
++
+ using namespace std;
+ 
+ CSimpleIniA settingsIni;
+ 
++static std::string int_to_string(int val) {
++	std::ostringstream oss;
++	oss << val;
++	return oss.str();
++}
++
+ std::string defaultIni =
+ "[settings]\n"
+ "stretch = 1\n"
+@@ -27,7 +35,7 @@ std::string defaultIni =
+ "bgcolor = 0\n";
+ 
+ void Host::setUpPaletteColors(){
+-    _paletteColors[0] = COLOR_00;
++	_paletteColors[0] = COLOR_00;
+ 	_paletteColors[1] = COLOR_01;
+ 	_paletteColors[2] = COLOR_02;
+ 	_paletteColors[3] = COLOR_03;
+@@ -269,7 +277,7 @@ int Host::getSetting(std::string sname) {
+ 	}else if(sname == "p8_bgcolor"){
+ 		
+ 		Logger_Write("Returning pico 8 bg color setting\n");
+-		std::string bgcolorstr = std::to_string(bgcolor) + "\n";
++		std::string bgcolorstr = int_to_string(bgcolor) + "\n";
+ 		Logger_Write(bgcolorstr.c_str());
+ 		switch(bgcolor)
+ 		{
+@@ -310,7 +318,7 @@ void Host::setSetting(std::string sname, int sval) {
+ 		resizekey = (ResizekeyOption) sval;
+ 	}else if(sname == "stretch"){
+ 		Logger_Write("setting Stretch to");
+-		std::string stringval = std::to_string(sval);
++		std::string stringval = int_to_string(sval);
+ 		Logger_Write(stringval.c_str());
+ 		Logger_Write("\n");
+ 		
+@@ -340,4 +348,4 @@ void Host::setSetting(std::string sname, int sval) {
+ 		Logger_Write(" not found!");
+ 	}
+ 	
+-}
+\ No newline at end of file
++}
+diff --git a/source/stringToDataHelpers.cpp b/source/stringToDataHelpers.cpp
+index 1446f9a..5064e39 100644
+--- a/source/stringToDataHelpers.cpp
++++ b/source/stringToDataHelpers.cpp
+@@ -1,5 +1,6 @@
+ #include <cstdint>
+ #include <string>
++#include <cstdlib>
+ 
+ #include "stringToDataHelpers.h"
+ 
+diff --git a/source/synth.cpp b/source/synth.cpp
+index a7b5e0b..c059f79 100644
+--- a/source/synth.cpp
++++ b/source/synth.cpp
+@@ -26,7 +26,7 @@ static float rand_float()
+ 
+ float synth::waveform(synth_param &params)
+ {
+-    using std::fabs, std::fmod;
++    using std::fabs; using std::fmod;
+ 
+     float advance = params.phi;
+     float t = fmod(advance, 1.f);
+diff --git a/source/vm.cpp b/source/vm.cpp
+index 63a6a63..8c5948e 100644
+--- a/source/vm.cpp
++++ b/source/vm.cpp
+@@ -35,6 +35,12 @@
+ 
+ using namespace z8;
+ 
++static std::string int_to_string(int val) {
++	std::ostringstream oss;
++	oss << val;
++	return oss.str();
++}
++
+ static const char DefaultCartName[] = "__FAKE08-DEFAULT.p8";
+ static const char SettingsCartName[] = "__FAKE08-SETTINGS.p8";
+ 
+@@ -210,7 +216,7 @@ void printLuaStack(lua_State* L) {
+ 
+             // numbers
+             case LUA_TNUMBER:
+-                str = str + std::to_string(lua_tonumber(L, index)) + "\n";
++                str = str + int_to_string(lua_tonumber(L, index)) + "\n";
+                 break;
+ 
+         // strings
