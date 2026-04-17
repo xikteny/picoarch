@@ -1,10 +1,10 @@
 diff --git a/Makefile b/Makefile
-index ef2deca..54ce8f2 100644
+index e400288..bb052f4 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -333,6 +333,23 @@ else ifeq ($(platform), miyoo)
+@@ -353,6 +353,23 @@ else ifeq ($(platform), gcw0)
     SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
-    FLAGS += -fomit-frame-pointer -ffast-math -march=armv5te -mtune=arm926ej-s
+    FLAGS += -ffast-math -march=mips32 -mtune=mips32r2 -mhard-float
  
 +# TrimUI Model S
 +else ifeq ($(platform), trimui)
@@ -26,23 +26,23 @@ index ef2deca..54ce8f2 100644
  # Windows MSVC 2017 all architectures
  else ifneq (,$(findstring windows_msvc2017,$(platform)))
  
-@@ -565,10 +582,19 @@ all: $(TARGET)
- 
- ifeq ($(DEBUG),1)
-    FLAGS += -O0 -g
+@@ -615,10 +632,19 @@ ifneq (,$(findstring msvc,$(platform)))
+    CFLAGS   += -MT
+    CXXFLAGS += -MT
+ endif
 +else ifneq (,$(OPTIMIZE))
-+   FLAGS += $(OPTIMIZE)
- else
-    FLAGS += -O2 -DNDEBUG $(EXTRA_GCC_FLAGS)
++   FLAGS    += $(OPTIMIZE)
++else
+    CFLAGS   += -O2 -DNDEBUG
+    CXXFLAGS += -O2 -DNDEBUG
  endif
  
 +ifeq ($(PROFILE), GENERATE)
-+   FLAGS  += -fprofile-generate=./profile/$(TARGET_NAME)
-+   LDFLAGS += -lgcov
++   FLAGS    += -fprofile-generate=./profile/$(TARGET_NAME)
++   LDFLAGS  += -lgcov
 +else ifeq ($(PROFILE), APPLY)
-+   FLAGS  += -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
++   FLAGS    += -fprofile-use -fprofile-dir=../profile/$(TARGET_NAME) -fbranch-probabilities
 +endif
-+
- ifneq (,$(findstring msvc,$(platform)))
- ifeq ($(DEBUG), 1)
-    CFLAGS   += -MTd
+ 
+ OBJECTS := $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
+ 
