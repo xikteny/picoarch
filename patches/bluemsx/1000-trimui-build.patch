@@ -1,12 +1,12 @@
 diff --git a/Makefile.libretro b/Makefile.libretro
-index 6f412c7..afa0571 100644
+index 6f412c7..6f1bfec 100644
 --- a/Makefile.libretro
 +++ b/Makefile.libretro
 @@ -431,6 +431,20 @@ else ifneq (,$(findstring armv,$(platform)))
  	endif
  	PLATFORM_DEFINES += -DARM
  
-+# TRIMUI
++# TRIMUI Model S
 +else ifeq ($(platform), trimui)
 +	TARGET := $(TARGET_NAME)_libretro.so
 +	CC = $(CROSS_COMPILE)gcc

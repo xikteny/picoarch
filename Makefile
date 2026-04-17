@@ -46,7 +46,7 @@ CFLAGS        += -DREVISION=\"$(GIT_REVISION)\"
 LDFLAGS        = -lc -ldl -lgcc -lm -lSDL -lasound -lpng -lz -llz4 -lpthread -Wl,--gc-sections -flto
 
 # Single core for testing purposes
-CORES = gambatte
+CORES = bluemsx
 # The full set of original core settings are below, commented by "## "
 ## # Unpolished or slow cores that build
 ## # EXTRA_CORES += mame2003_plus scummvm
