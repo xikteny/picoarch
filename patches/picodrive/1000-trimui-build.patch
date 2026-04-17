@@ -40,3 +40,55 @@ index b6e583fa..8232af88 100644
  ifneq (,$(findstring msvc,$(platform)))
  	OBJOUT = -Fo
  	LINKOUT = -out:
+diff --git a/pico/cd/libchdr/deps/lzma-24.05/src/CpuArch.c b/pico/cd/libchdr/deps/lzma-24.05/src/CpuArch.c
+index a95b478..5f91f16 100644
+--- a/pico/cd/libchdr/deps/lzma-24.05/src/CpuArch.c
++++ b/pico/cd/libchdr/deps/lzma-24.05/src/CpuArch.c
+@@ -794,7 +794,8 @@ BoolInt CPU_IsSupported_AES (void) { return APPLE_CRYPTO_SUPPORT_VAL; }
+ #ifdef Z7_GETAUXV_AVAILABLE
+ // #pragma message("=== Z7_GETAUXV_AVAILABLE === ")
+ #include <sys/auxv.h>
+-#define USE_HWCAP
++// this needs to be skipped for the ancient TrimUI Model S toolchain to build this dependency
++// #define USE_HWCAP
+ #endif
+ 
+ #ifdef USE_HWCAP
+diff --git a/cpu/cyclone/Makefile b/cpu/cyclone/Makefile
+index 98a578a..0c6c98c 100644
+--- a/cpu/cyclone/Makefile
++++ b/cpu/cyclone/Makefile
+@@ -7,15 +7,32 @@ CFLAGS += -DHAVE_ARMv6=$(HAVE_ARMv6)
+ endif
+ CXXFLAGS += $(CFLAGS)
+ 
++# Host toolchain (used to build generator that must run on the build host)
++# Override on the command line if needed, e.g. HOSTCXX=g++-9
++HOSTCC    ?= gcc
++HOSTCXX   ?= g++
++
++# Objects used to build native cyclone_gen (compile these with host compiler)
+ OBJS = Main.o Ea.o OpAny.o OpArith.o OpBranch.o OpLogic.o OpMove.o Disa/Disa.o
+ 
++.PHONY: all clean
+ all: Cyclone.s
+ 
+ Cyclone.s: cyclone_gen
+ 	./$<
+ 
++# Explicitly compile generator sources with host compilers
++# C++ sources:
++%.o: %.cpp
++	$(HOSTCXX) $(CFLAGS) -c $< -o $@
++
++# C sources inside Disa/
++Disa/%.o: Disa/%.c
++	$(HOSTCC) $(CXXFLAGS) -c $< -o $@
++
++# Generator linking uses the host linker/compiler
+ cyclone_gen: $(OBJS)
+-	$(CXX) -o $@ $^ $(LDFLAGS)
++	$(HOSTCXX) -o $@ $^ $(LDFLAGS)
+ 
+ clean:
+ 	$(RM) $(OBJS) cyclone_gen Cyclone.s
